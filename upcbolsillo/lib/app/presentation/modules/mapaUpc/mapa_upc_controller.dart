@@ -155,7 +155,7 @@ consultarUpc()async{
         peticionServerState(false);
       }
     } catch (e) {
-      print("Excepción en la solicitud OSRM: $e");
+      print("Excepción en la solicitud OSR: $e");
       peticionServerState(false);
     }
 
