@@ -7,4 +7,6 @@ class AppRoutes{
   static const ITEMSTIPS="/itemsTips";
   static const MAPAUPC="/mapaUpc";
   static const REGISTROUSUARIO="/registroUsuario";
+
+  static const REGISTRAR_EVENTO="/registroEvento";
 }

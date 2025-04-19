@@ -7,6 +7,7 @@ import 'dart:io';
 
 //NECESARIOS PARA SUBIR ARCHIVOS
 import 'package:async/async.dart'; //DelegatingStream
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -20,6 +21,7 @@ import '../../core/app_config.dart';
 import '../../core/exceptions/exception_helper.dart';
 import '../../core/exceptions/exceptions.dart';
 
+import '../../core/utils/prints_msj.dart';
 import '../../domain/repositories/domain_repositories.dart';
 import '../models/items.dart';
 import '../models/models.dart';
@@ -38,5 +40,8 @@ part 'remote/servicios_api_provider.dart';
 part 'remote/items_api_provider.dart';
 part 'remote/mapa_upc_api_provider.dart';
 part 'remote/registro_usuario_api_provider.dart';
+
+part 'remote/host/url_api_provider_app.dart';
+part 'remote/host/host_app.dart';
 
 

@@ -54,5 +54,10 @@ class AppPages {
         name: AppRoutes.REGISTROUSUARIO,
         page: () => RegistroUsuarioPage(),
         binding: RegistroUsuarioBinding()),
+
+    getPageConfig(
+        name: AppRoutes.REGISTRAR_EVENTO,
+        page: () => EventosPage(),
+        binding: EventosBinding()),
   ];
 }

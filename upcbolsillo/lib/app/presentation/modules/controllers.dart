@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_polyline_points_plus/flutter_polyline_points_plus.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,6 +19,8 @@ import 'package:network_info_plus/network_info_plus.dart';
 
 
 
+import '../../../feactures/saveFile/domain/request/file_request.dart';
+import '../../../feactures/saveFile/domain/use_cases/save_file_img_use_case.dart';
 import '../../core/app_config.dart';
 import '../../core/change_notifier/connection_status_change_notifier.dart';
 import '../../core/exceptions/exceptions.dart';
@@ -25,6 +28,7 @@ import '../../core/utils/check_internet_conexion.dart';
 import '../../core/utils/device_info.dart';
 import '../../core/utils/my_date.dart';
 import '../../core/utils/my_gps.dart';
+import '../../core/utils/photo_helper.dart';
 import '../../core/utils/utilidadesUtil.dart';
 import '../../core/values/app_images.dart';
 import '../../data/models/items.dart';
@@ -49,4 +53,6 @@ part 'servicios/servicios_controller.dart';
 part 'acuerdo/acuerdo_controller.dart';
 part 'mapaUpc/mapa_upc_controller.dart';
 part 'registroUsuario/registro_usuario_controller.dart';
+
+part 'eventos/eventos_controller.dart';
 

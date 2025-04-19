@@ -3,6 +3,7 @@ import 'dart:math' as Math;
 import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:upcbolsillo/app/core/utils/photo_helper.dart';
 import 'package:upcbolsillo/app/core/utils/utilidadesUtil.dart';
 
 import '../../data/models/models.dart';

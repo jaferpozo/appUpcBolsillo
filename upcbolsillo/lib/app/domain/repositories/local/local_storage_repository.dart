@@ -14,4 +14,14 @@ abstract class LocalStorageRepository{
   Future<String> getDatosMail();
   Future<bool> setDatosMail(String value);
 
+  Future<List<Modulo>> getListModulos();
+  Future<bool> setDatosListaModulos( {required List<Modulo>  listModulos});
+
+
+  Future<List<Servicio>> getListServicios();
+  Future<bool> setDatosListaServicios( {required List<Servicio>  listServicios});
+
+
+
+
 }

@@ -19,7 +19,7 @@ class AppConfig {
   static  String formatoSoloMinuto =  'mm';
 
 
-
+static int secondsTimeout=8;
 
   static const double radioBotones = 15.0;
   static const int intentosFallidos = 3;

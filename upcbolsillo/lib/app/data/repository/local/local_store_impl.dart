@@ -33,5 +33,29 @@ class LocalStoreImpl extends LocalStorageRepository {
     return _localStoreProviderImpl.setDatosUsuario(value);
   }
 
+  @override
+  Future<List<Modulo>> getListModulos() async {
+    return _localStoreProviderImpl.getListModulos();
+  }
 
+  @override
+  Future<bool> setDatosListaModulos({required List<Modulo> listModulos}) async {
+    return _localStoreProviderImpl.setDatosListaModulos(
+      listModulos: listModulos,
+    );
+  }
+
+  @override
+  Future<List<Servicio>> getListServicios() async {
+    return _localStoreProviderImpl.getListServicios();
+  }
+
+  @override
+  Future<bool> setDatosListaServicios({
+    required List<Servicio> listServicios,
+  }) async {
+    return _localStoreProviderImpl.setDatosListaServicios(
+      listServicios: listServicios,
+    );
+  }
 }

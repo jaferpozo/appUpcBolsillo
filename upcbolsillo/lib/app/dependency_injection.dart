@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:upcbolsillo/app/presentation/gps/gps_impl_helper.dart';
 
+import '../feactures/di_feactures.dart';
 import 'data/providers/providers_impl.dart';
 import 'data/repository/data_repositories.dart';
 import 'domain/repositories/domain_repositories.dart';
@@ -22,6 +23,8 @@ class DependencyInjection extends Bindings{
     Get.lazyPut<MapaUpcApiImpl> (() => MapaUpcApiImpl(MapaUpcApiProviderImpl()), fenix: true);
     Get.lazyPut<RegistroUsuarioApiImpl> (() => RegistroUsuarioApiImpl(RegistroUsuarioApiProviderImpl()), fenix: true);
     Get.put(GpsController());
+
+    DependencyInjectionFeactures.init();
   }
 
   @override

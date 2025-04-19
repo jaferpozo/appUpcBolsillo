@@ -28,3 +28,5 @@ part 'acuerdo/acuerdo_page.dart';
 part 'mapaUpc/mapa_upc_page.dart';
 part 'registroUsuario/registro_usuario_page.dart';
 
+part 'eventos/eventos_page.dart';
+

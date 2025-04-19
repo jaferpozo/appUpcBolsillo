@@ -13,6 +13,32 @@ class ServiciosApiProviderImpl extends ServiciosRepository {
     }
   }
 
+  @override
+  Future<bool> registrarEvento({required String tipoEvento, required String descripcion, required String imagen}) async {
+    try {
+      String segmento="polco/index.php";
+
+      Map<String, String>? body = {
+        "opc" :"add-evento",
+        "modulo" :"ddced13c854fb2c03d6e01ce5bfd7e08",
+        "tipoEvento" :tipoEvento,
+        "descripcion" : descripcion,
+        "imagen" : imagen
+      };
+
+
+      String json = await UrlApiProvider.post(segmento: segmento,body: body);
+
+
+      UcpReportaEventoModel resul=  ucpReportaEventoModelFromJson(json);
+
+
+      return  resul.upcReportaEvento.msj=="true"?true:false;
+    } catch (e) {
+      throw ExceptionHelper.captureError(e);
+    }
+  }
+
 
 
 

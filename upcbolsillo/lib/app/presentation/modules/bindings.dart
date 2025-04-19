@@ -12,4 +12,6 @@ part 'acuerdo/acuerdo_binding.dart';
 part 'mapaUpc/mapa_upc_binding.dart';
 part 'registroUsuario/registro_usuario_binding.dart';
 
+part 'eventos/eventos_binding.dart';
+
 

@@ -12,6 +12,15 @@ class ServiciosApiImpl extends ServiciosRepository {
     }
   }
 
+  @override
+  Future<bool> registrarEvento({required String tipoEvento, required String descripcion, required String imagen}) async {
+    try {
+      return  await _serviciosApiProviderImpl.registrarEvento(tipoEvento: tipoEvento, descripcion: descripcion, imagen: imagen);
+    }  catch (e){
+      throw ExceptionHelper.captureError(e);
+    }
+  }
+
 
 
 }

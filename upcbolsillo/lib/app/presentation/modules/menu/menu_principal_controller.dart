@@ -50,6 +50,8 @@ class MenuPrincipalController extends GetxController {
 
   final LocalStoreImpl _localStoreImpl = Get.find<LocalStoreImpl>();
 
+  Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);
+
   _verificaDatos() async {
     print("SPLASH: verificando datos");
     userPref.value = await _localStoreImpl.getDatosUsuario();
@@ -73,12 +75,19 @@ class MenuPrincipalController extends GetxController {
     }
   }
 
-  connectionStatusController() {
+  connectionStatusController() async {
     connectionSubscription = internetChecker
         .internetStatus()
         .listen((newStatus) => status.value = newStatus);
     if (status.value == ConnectionStatus.online){
       verificaTConexion();
+    }
+    else{
+
+      //cambiar
+      var list =await _localStoreImpl.getListModulos();
+      listaModulo.value=list;
+      print("tengo estos modulos ${list.length}");
     }
 
   }
@@ -87,27 +96,50 @@ class MenuPrincipalController extends GetxController {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        estadoConex = 'S';
+
         print('connected');
         cargarDatosLista();
       }
+      else{
+
+      }
     } on SocketException catch (_) {
-      estadoConex = 'N';
+
+      var list =await _localStoreImpl.getListModulos();
+      listaModulo.value=list;
+      print("tengo estos modulos ${list.length}");
+
+
+
     }
   }
 
   cargarDatosLista() async {
     try {
+      print("cargarDatosLista");
 
       listaModulo.clear();
       peticionServerState(true);
       listaModulo.value = await _apiModulosRepository.buscaListaModulos();
       print('----------------------*$listaModulo');
-      if (listaModulo.isNotEmpty) {}
+
+      if(listaModulo.length==0){
+        var list =await _localStoreImpl.getListModulos();
+        listaModulo.value=list;
+        return;
+      }
+
+
+      _localStoreImpl.setDatosListaModulos(listModulos: listaModulo.value);
+
       peticionServerState(false);
    } on ServerException catch (e) {
       peticionServerState(false);
-      DialogosAwesome.getError(descripcion: e.cause);
+     // DialogosAwesome.getError(descripcion: e.cause);
+
+      var list =await _localStoreImpl.getListModulos();
+      listaModulo.value=list;
+      print("tengo estos modulos ${list.length}");
     }
   }
 

@@ -39,14 +39,15 @@ dependencies:
   latlong2: ^0.9.1
   flutter_polyline_points_plus: ^3.0.0
   polylabel: ^1.0.1
+  flutter_dotenv: ^5.2.1 #leer .env
 
   #vibration: ^1.7.6 #vibracion device
   location: ^8.0.0
   geocoding: ^3.0.0
   geolocator: ^14.0.0 #ubicacion Gps, del dispositivo #error en la actualizacion 8.0.1 No named parameter with the name 'desiredAccuracy'.
 
-    #device_imei: ^0.0.4+2
-  #unique_identifier: ^0.3.0 #obtener imei
+
+  dropdown_search: ^6.0.2 #Combo con busqueda
 
 dev_dependencies:
   flutter_test:
@@ -85,7 +86,7 @@ flutter:
   assets:
     - assets/img/
     - assets/icon/
-
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

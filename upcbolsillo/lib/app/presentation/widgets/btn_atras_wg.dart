@@ -28,6 +28,7 @@ class BtnAtrasWidget extends StatelessWidget {
                 Get.back(),
             //volver atras
             child: Icon(
+
               Icons.arrow_back,
               color: Colors.white,
               size: responsive.isVertical()
