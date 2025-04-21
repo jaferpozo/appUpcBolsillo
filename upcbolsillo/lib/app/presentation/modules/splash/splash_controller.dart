@@ -21,8 +21,8 @@ class SplashController extends GetxController {
   final LocalStoreImpl _localStoreImpl = Get.find<LocalStoreImpl>();
 
   _init() async {
-    await FirebaseMessaging.instance.requestPermission();
-    await Firebase.initializeApp();
+
+    await generaToken();
     print(Get.deviceLocale.toString());
 
   }
@@ -60,7 +60,7 @@ class SplashController extends GetxController {
     }
 
 }
-generaToken ()async{
+   generaToken ()async{
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   String? token = await messaging.getToken();
   print("Mi token: $token");

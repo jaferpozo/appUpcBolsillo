@@ -28,16 +28,24 @@ class EventosController extends GetxController {
   String detalle = 'RECUERDE LO SIGUIENTE';
   RxList<String> listaDetalleItemsEventos = <String>[].obs;
 
-  RxList<String> listDelito = <String>["ROBO", "HURTO", "ATROPELLAMIENTO","ACCIDENTE DE TRÁNSITO","OTROS"].obs;
+  RxList<String> listDelito =
+      <String>[
+        "ROBO",
+        "HURTO",
+        "ATROPELLAMIENTO",
+        "ACCIDENTE DE TRÁNSITO",
+        "OTROS",
+      ].obs;
   RxString selectDelito = "".obs;
 
   RxBool mostrarBtnGuardar = false.obs;
 
   var datosServicio = Get.parameters;
-  String imagenModulo="";
+  String imagenModulo = "";
   String fecha = "";
   String estadoConex = "";
   int id = 0;
+
   @override
   void onInit() {
     fecha = 'Hoy es ${UtilidadesUtil.getFechaActual}';
@@ -62,7 +70,7 @@ class EventosController extends GetxController {
   }
 
   guardarEvento() async {
-
+    await FirebaseMessaging.instance.requestPermission();
 
     try {
       String path = dotenv.env['PATH_IMG_ELECCIONES'] ?? '';
@@ -78,7 +86,6 @@ class EventosController extends GetxController {
       peticionServerState(true);
       bool insertImg = await _saveFileImgUseCase(request: request);
       peticionServerState(false);
-
 
       if (!insertImg) {
         DialogosAwesome.getWarning(
@@ -99,14 +106,21 @@ class EventosController extends GetxController {
         descripcion: descripcionController.text,
         imagen: nameCompletoImg,
       );
-
-
+      // ► Envía la notificación
+      final ok = await sendEventNotification(
+        title: 'Nuevo Evento Registrado',
+        body: 'Tipo de delito: ${selectDelito.value}',
+      );
+      if (!ok) {
+        debugPrint('La push no se envió correctamente.');
+      } else {
+        DialogosAwesome.getWarning(descripcion: "INTENTE OTRA VEZ");
+      }
       peticionServerState(false);
 
-      if(resultInsert){
+      if (resultInsert) {
         DialogosAwesome.getSucess(descripcion: "REGISTRADO");
-      }
-      else{
+      } else {
         DialogosAwesome.getWarning(descripcion: "INTENTE OTRA VEZ");
       }
     } on ServerException catch (e) {
@@ -118,4 +132,41 @@ class EventosController extends GetxController {
     }
   }
 
+  /// Suscribe al dispositivo al topic 'eventos'
+  Future<void> subscribeToTopic() async {
+    await FirebaseMessaging.instance.subscribeToTopic('eventos');
+  }
+
+  /// Envía una notificación al topic 'eventos'
+  Future<bool> sendEventNotification({
+    required String title,
+    required String body,
+  }) async {
+    await subscribeToTopic();
+    final String _serverKey = dotenv.env['FCM_SERVER_KEY']!;
+    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'key=$_serverKey',
+    };
+    final payload = {
+      'to': '/topics/eventos',
+      'priority': 'high',
+      'notification': {'title': title, 'body': body, 'sound': 'default'},
+    };
+
+    final res = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(payload),
+    );
+
+    if (res.statusCode == 200) {
+      debugPrint('✅ Push enviada: ${res.body}');
+      return true;
+    } else {
+      debugPrint('❌ Error (${res.statusCode}): ${res.body}');
+      return false;
+    }
+  }
 }

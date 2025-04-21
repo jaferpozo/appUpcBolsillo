@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyB35e-MhxoxpFMg4vfc7FICjUT3bcRC4YI</string>
+	<string>AIzaSyD7-BK3uPh8phBmG5sz1G6-pko9rMXFyGg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>69644905660</string>
+	<string>423096195082</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.upcbolsillo</string>
 	<key>PROJECT_ID</key>
-	<string>upcbolsillo</string>
+	<string>upcbolsillo-f425b</string>
 	<key>STORAGE_BUCKET</key>
-	<string>upcbolsillo.firebasestorage.app</string>
+	<string>upcbolsillo-f425b.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:69644905660:ios:b28d3de9c790c881f2f4b9</string>
+	<string>1:423096195082:ios:9b78ec2fc94d6fc8dee7f3</string>
 </dict>
 </plist>
