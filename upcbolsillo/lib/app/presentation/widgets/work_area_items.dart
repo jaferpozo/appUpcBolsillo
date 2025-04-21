@@ -1,8 +1,9 @@
 part of 'custom_widgets.dart';
 
 class WorkAreaItemsPageWidget extends StatefulWidget {
-  final  RxBool peticionServer;
+  final RxBool peticionServer;
   final String title;
+  final String titleAppBar;
   final String name;
   final Widget contenido;
   final bool btnAtras;
@@ -10,14 +11,15 @@ class WorkAreaItemsPageWidget extends StatefulWidget {
   final Widget? widgetBtnFinal;
   final EdgeInsetsGeometry? paddin;
   final FloatingActionButtonLocation ubicacionBtnFinal;
-  final imgFondo;
+  final String? imgFondo;
   final double sizeTittle;
   final bool mostrarVersion;
-  final  foto64;
+  final String? foto64;
 
   const WorkAreaItemsPageWidget({
     required this.peticionServer,
     this.title = '',
+    this.titleAppBar = '',
     required this.contenido,
     this.btnAtras = false,
     this.widgetBtnFinal,
@@ -29,7 +31,6 @@ class WorkAreaItemsPageWidget extends StatefulWidget {
     this.pantallaIrAtras,
     this.name = '',
     this.foto64,
-
   });
 
   @override
@@ -37,10 +38,12 @@ class WorkAreaItemsPageWidget extends StatefulWidget {
 }
 
 class _WorkAreaItemsPageWidgetState extends State<WorkAreaItemsPageWidget> {
-  String ver='';
+  GpsController gpsController = Get.find<GpsController>();
+  String ver = '';
+
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     _loadVersion();
   }
 
@@ -48,81 +51,120 @@ class _WorkAreaItemsPageWidgetState extends State<WorkAreaItemsPageWidget> {
     String _version = await UtilidadesUtil.getVersionCodeNameApp();
     setState(() {
       ver = _version;
-
-
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveUtil();
-    Widget wgImgFondo = Container(
+
+    return Scaffold(
+      appBar: getAppBar(widget.titleAppBar),
+      bottomNavigationBar: bannerInferior(responsive),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
+            _buildBackground(responsive),
+            if (widget.btnAtras)
+              Positioned(
+                child: BtnAtrasWidget(pantallaIrAtras: widget.pantallaIrAtras),
+              ),
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: widget.paddin ?? const EdgeInsets.all(6.0),
+                  child: widget.contenido,
+                ),
+              ),
+            ),
+            Obx(() => CargandoWidget(mostrar: widget.peticionServer.value)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackground(ResponsiveUtil responsive) {
+    return SizedBox(
       height: responsive.alto,
       width: responsive.ancho,
       child: Image.asset(
         widget.imgFondo ?? AppImages.imgarea,
-        fit: BoxFit.fill,
+        fit: BoxFit.cover,
       ),
     );
+  }
 
-    Widget wgBtnAtras = Container(child:  widget.btnAtras
-        ? BtnAtrasWidget(
-      pantallaIrAtras: widget.pantallaIrAtras,
-    )
-        : Container(),
-    );
-    return Scaffold(
-        bottomNavigationBar:   bannerInferior(responsive),
-        body: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
-            child:  SafeArea(child: Stack(
-              children: [
-                wgImgFondo,
-                wgBtnAtras,
-                Column(
-                  children: [
-                    SizedBox(height: responsive.altoP(3.0),),
-                    widget.contenido,
-                  ],
+  AppBar getAppBar(String titleAppBar) {
+    return AppBar(
+      backgroundColor: Colors.blue[900],
+      title: Text(
+        titleAppBar,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
+      ),
+      centerTitle: true,
+      leading: Builder(
+        builder: (BuildContext context) {
+          return Container(
+            margin: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
                 ),
-                Obx(()=>  CargandoWidget(
-                  mostrar: widget.peticionServer.value,
-                )
-                )
               ],
-            )),));
-  }
-
-
-  Widget imgBanner(
-      {required GestureTapCallback onTap, required String ruta, required ResponsiveUtil responsive}) {
-    double size =
-    responsive.isVertical() ? responsive.altoP(8) : responsive.anchoP(8);
-    return Container(
-        height: size,
-        width: size,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            color: Colors.transparent,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image.asset(
-                ruta,
-              ),
             ),
-          ),
-        ));
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              color: Colors.white,
+              iconSize: 30,
+              onPressed: () => Get.back(),
+              tooltip: 'Atrás',
+            ),
+          );
+        },
+      ),
+    );
   }
+
+  Widget imgBanner({
+    required GestureTapCallback onTap,
+    required String ruta,
+    required ResponsiveUtil responsive,
+  }) {
+    double size = responsive.isVertical()
+        ? responsive.altoP(8)
+        : responsive.anchoP(8);
+    return SizedBox(
+      height: size,
+      width: size,
+      child: InkWell(
+        onTap: onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Image.asset(ruta),
+        ),
+      ),
+    );
+  }
+
   Widget bannerInferior(ResponsiveUtil responsive) {
     return Container(
       height: responsive.altoP(5),
       color: Colors.blue[900],
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           imgBanner(
               onTap: launchURLFace,
@@ -145,42 +187,31 @@ class _WorkAreaItemsPageWidgetState extends State<WorkAreaItemsPageWidget> {
     );
   }
 
-
-  launchURLFace() async {
+  static Future<void> launchURLFace() async {
     final url = Uri.parse('https://www.facebook.com/policia.ecuador');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
-  launchURLTwitter() async {
+
+  static Future<void> launchURLTwitter() async {
     final url = Uri.parse('https://twitter.com/PoliciaEcuador');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
 
-  launchURLInsta() async {
+  static Future<void> launchURLInsta() async {
     final url = Uri.parse('https://www.instagram.com/policiaecuadoroficial');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
 
-  launchURLYou() async {
+  static Future<void> launchURLYou() async {
     final url = Uri.parse('https://www.youtube.com/user/policiaecuador2');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
-
 }
-
-

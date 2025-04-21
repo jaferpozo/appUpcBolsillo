@@ -1,30 +1,18 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:typed_data';
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 import 'dart:io';
-
 import 'dart:math' as Math;
+import 'dart:typed_data';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../../../app/core/utils/my_date.dart';
-import '../../../../../app/core/utils/responsiveUtil.dart';
-import '../../../../../app/core/utils/utilidadesUtil.dart';
 
-import '../../presentation/widgets/custom_widgets.dart';
-import '../app_config.dart';
-import '../values/app_colors.dart';
+import '../../../../../app/core/utils/my_date.dart';
 import '../values/app_images.dart';
 
 class PhotoHelper {
@@ -35,59 +23,95 @@ class PhotoHelper {
     final Completer<GaleryCameraModel?> completer = Completer();
 
     AwesomeDialog(
-      dismissOnTouchOutside: false,
-      dismissOnBackKeyPress: false,
       context: Get.context!,
-      dialogType: DialogType.info,
-      headerAnimationLoop: false,
-      customHeader: Container(child: Image.asset(AppImages.imgInstagran)),
       animType: AnimType.scale,
-      title: "Registre una Fotografia",
-      btnCancel: BtnIconWidget(
+      dialogType: DialogType.noHeader,
+      desc: 'Elige una imagen de la galería o toma una foto con la cámara',
+      customHeader: Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Image.asset(
+          AppImages.imgFoto,
+          height: 80,
+          fit: BoxFit.contain,
+        ),
+      ),
+      btnCancel: _animatedButton(
+        icon: Icons.photo_library,
+        text: "Galería",
+        color: Colors.blue.shade900,
         onTap: () async {
           Get.back();
           initPeticion(true);
-          GaleryCameraModel? data = await getImageGallery(titleImg);
+          final data = await getImageGallery(titleImg);
           initPeticion(false);
-          completer.complete(data); // Retorna la data al completar
-          // Cierra el diálogo
+          completer.complete(data);
         },
-        size: 15,
-        title: "Galería", iconData: Icons.phone_android, color: Colors.blue,
       ),
-      btnOk: BtnIconWidget(
-        size: 15,
-        iconData: Icons.camera_alt, color: Colors.blue,
+      btnOk: _animatedButton(
+        icon: Icons.camera_alt,
+        text: "Cámara",
+        color: Colors.blue.shade900,
         onTap: () async {
-          initPeticion(true);
           Get.back();
-          GaleryCameraModel? data = await getImageCamera(titleImg);
-          // Cierra el diálogo
-          completer.complete(data); // Retorna la data al completar
+          initPeticion(true);
+          final data = await getImageCamera(titleImg);
           initPeticion(false);
+          completer.complete(data);
         },
-        title: "Cámara",
       ),
-      desc: "Seleccione una Imagen o Tome una Fotografía",
+      dismissOnTouchOutside: true,
       showCloseIcon: true,
     ).show();
 
-    return completer
-        .future; // Espera la selección del usuario antes de retornar
+    return completer.future;
+  }
+
+  static Widget _animatedButton({
+    required IconData icon,
+    required String text,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.5),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white),
+            SizedBox(width: 10),
+            Text(text,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   static Future<GaleryCameraModel?> getImageGallery(String title) async {
-    final ImagePicker _picker = ImagePicker();
-
-    var imageFile = await _picker.pickImage(source: ImageSource.gallery);
-
+    final picker = ImagePicker();
+    final imageFile = await picker.pickImage(source: ImageSource.gallery);
     return getImagenResourse(title: title, imageFile: imageFile);
   }
 
   static Future<GaleryCameraModel?> getImageCamera(String title) async {
-    final ImagePicker _picker = ImagePicker();
-    var imageFile = await _picker.pickImage(source: ImageSource.camera);
-
+    final picker = ImagePicker();
+    final imageFile = await picker.pickImage(source: ImageSource.camera);
     return getImagenResourse(title: title, imageFile: imageFile);
   }
 
@@ -95,164 +119,59 @@ class PhotoHelper {
     required String title,
     XFile? imageFile,
   }) async {
-    int tamImg = 900;
+    if (imageFile == null) return null;
+    final bytes = await File(imageFile.path).readAsBytes();
+    final image = Img.decodeImage(bytes);
+    if (image == null) return null;
 
-    if (imageFile != null) {
-      final path = imageFile.path;
-      print("path ${path}");
-      final bytes = await File(path).readAsBytes();
-
-      print("los bytes ${bytes}");
-
-      Img.Image? image = Img.decodeImage(bytes);
-
-      // Resize the image to a 120x? thumbnail (maintaining the aspect ratio).
-      //Img Image thumbnail = copyResize(image, 120);
-
-      return getResizeImg(image: image!, title: title, tamImg: tamImg);
-    }
+    return getResizeImg(title: title, image: image, tamImg: 900);
   }
 
   static Future<GaleryCameraModel> getResizeImg({
     required String title,
     required Img.Image image,
     required int tamImg,
-    bool mejorar = false,
-    bool mejorarVertical = false,
   }) async {
-    print('Alto: ${image.height}, Ancho ${image.width}');
+    int alto = image.height;
+    int ancho = image.width;
+    double relacion = ancho / alto;
 
-    int altoImg = image.height;
-    int anchoImg = image.width;
-
-    final tempDir = await getTemporaryDirectory();
-    final path = tempDir.path;
-    int rand = new Math.Random().nextInt(100000);
-
-    bool isHorizontal = false;
-    bool isVertical = false;
-
-    if (altoImg > tamImg || anchoImg > tamImg) {
-      print("ingreso");
-
-      //Calculamos la relacion aspecto de la imagen
-      double relacionAspecto = anchoImg / altoImg;
-
-      if (mejorar) {
-        //se la cambia de valor por que la imagen se mejoro de m,anera ver
-        if (altoImg > anchoImg) {
-          //Img Vertical
-
-          isVertical = false;
-          isHorizontal = true;
-
-          //Obtenemos el nuevo alto
-          double altoImgNew = tamImg / relacionAspecto;
-          altoImgNew = UtilidadesUtil.redondearDouble(altoImgNew, decimales: 0);
-
-          //Asiganmos los nuevos valores
-          anchoImg = tamImg;
-          altoImg = altoImgNew.toInt();
-          print('Img Horizontal: Nuevo alto ${altoImg}, ancho ${anchoImg}');
-        } else {
-          //Ancho Mayor
-          //Img Horizontal
-          isVertical = true;
-          isHorizontal = false;
-
-          //Obtenemos el nuevo ancho
-          double anchoImgNew = tamImg * relacionAspecto;
-          anchoImgNew = UtilidadesUtil.redondearDouble(
-            anchoImgNew,
-            decimales: 0,
-          );
-
-          //Asiganmos los nuevos valores
-          altoImg = tamImg;
-          anchoImg = anchoImgNew.toInt();
-
-          print('Img Vertical: Nuevo alto ${altoImg}, ancho ${anchoImg}');
-        }
+    if (alto > tamImg || ancho > tamImg) {
+      if (alto > ancho) {
+        ancho = (tamImg * relacion).round();
+        alto = tamImg;
       } else {
-        if (altoImg > anchoImg) {
-          //Img Vertical
-
-          isVertical = true;
-          isHorizontal = false;
-
-          //Obtenemos el nuevo ancho
-          double anchoImgNew = tamImg * relacionAspecto;
-          anchoImgNew = UtilidadesUtil.redondearDouble(
-            anchoImgNew,
-            decimales: 0,
-          );
-
-          //Asiganmos los nuevos valores
-          altoImg = tamImg;
-          anchoImg = anchoImgNew.toInt();
-
-          print('Img Vertical: Nuevo alto ${altoImg}, ancho ${anchoImg}');
-        } else {
-          //Ancho Mayor
-          //Img Horizontal
-
-          isVertical = false;
-          isHorizontal = true;
-
-          //Obtenemos el nuevo alto
-          double altoImgNew = tamImg / relacionAspecto;
-          altoImgNew = UtilidadesUtil.redondearDouble(altoImgNew, decimales: 0);
-
-          //Asiganmos los nuevos valores
-          anchoImg = tamImg;
-          altoImg = altoImgNew.toInt();
-          print('Img Horizontal: Nuevo alto ${altoImg}, ancho ${anchoImg}');
-        }
+        alto = (tamImg / relacion).round();
+        ancho = tamImg;
       }
     }
 
-    Img.Image smallerImg = Img.copyResize(
-      image,
-      height: altoImg,
-      width: anchoImg,
-    );
-
-    String nameImg =
-        "image_" +
-            title +
-            "_" +
-            rand.toString() +
-            "_" +
-            MyDate.getFechaActual.replaceAll(" ", "_") +
-            ".jpg";
-    File compressImg = new File("$path/$nameImg")
-      ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 100));
+    final resized = Img.copyResize(image, height: alto, width: ancho);
+    final dir = await getTemporaryDirectory();
+    final path = dir.path;
+    final name = "img_${title}_${Math.Random().nextInt(99999)}_${MyDate.getFechaActual.replaceAll(" ", "_")}.jpg";
+    final file = File("$path/$name")..writeAsBytesSync(Img.encodeJpg(resized, quality: 100));
 
     return GaleryCameraModel(
-      tamImg: tamImg,
       title: title,
-      nombreImg: nameImg,
-      imageFile: compressImg,
+      tamImg: tamImg,
+      nombreImg: name,
+      imageFile: file,
       image: image,
-      isHorizontal: isHorizontal,
-      isVertical: isVertical,
+      isHorizontal: ancho >= alto,
+      isVertical: alto > ancho,
     );
   }
 
   static Uint8List? convertStringToUint8List(String? fotoString) {
     try {
-      Uint8List? imgDecode = null;
-      if (fotoString != null && fotoString != '') {
-        final decodedBytes = base64Decode(
-          fotoString.toString().split(',').last,
-        );
-        imgDecode = decodedBytes;
+      if (fotoString != null && fotoString.isNotEmpty) {
+        return base64Decode(fotoString.split(',').last);
       }
-      return imgDecode;
     } catch (e) {
-      log('Error al convertir imagen en ${e}');
-      return null;
+      log('Error al convertir imagen: $e');
     }
+    return null;
   }
 }
 
@@ -275,5 +194,3 @@ class GaleryCameraModel {
     this.isHorizontal = false,
   });
 }
-
-

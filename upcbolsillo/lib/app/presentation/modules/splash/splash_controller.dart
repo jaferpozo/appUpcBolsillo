@@ -5,6 +5,7 @@ class SplashController extends GetxController {
 
   @override
   void onInit() {
+
     _cargarPantallaLogin_InicioRapido();
     // TODO: el contolloler se ha creado pero la vista no se ha renderizado
     super.onInit();
@@ -20,6 +21,8 @@ class SplashController extends GetxController {
   final LocalStoreImpl _localStoreImpl = Get.find<LocalStoreImpl>();
 
   _init() async {
+    await FirebaseMessaging.instance.requestPermission();
+    await Firebase.initializeApp();
     print(Get.deviceLocale.toString());
 
   }
@@ -57,5 +60,11 @@ class SplashController extends GetxController {
     }
 
 }
+generaToken ()async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  String? token = await messaging.getToken();
+  print("Mi token: $token");
+}
+
 
 }

@@ -10,7 +10,7 @@ class EventosController extends GetxController {
 
   final ServiciosApiImpl _apiServiciosRepository = Get.find<ServiciosApiImpl>();
   final SaveFileImgUseCase _saveFileImgUseCase = Get.find();
-
+  final TextEditingController descripcionController = TextEditingController();
   Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);
   Rx<Servicio> datosEventos =
       Servicio(
@@ -28,18 +28,20 @@ class EventosController extends GetxController {
   String detalle = 'RECUERDE LO SIGUIENTE';
   RxList<String> listaDetalleItemsEventos = <String>[].obs;
 
-  RxList<String> listDelito = <String>["ROBO", "HURTO", "OTRO"].obs;
+  RxList<String> listDelito = <String>["ROBO", "HURTO", "ATROPELLAMIENTO","ACCIDENTE DE TRÁNSITO","OTROS"].obs;
   RxString selectDelito = "".obs;
 
   RxBool mostrarBtnGuardar = false.obs;
 
   var datosServicio = Get.parameters;
+  String imagenModulo="";
   String fecha = "";
   String estadoConex = "";
   int id = 0;
   @override
   void onInit() {
-    // TODO: el contolloler se ha creado pero la vista no se ha renderizado
+    fecha = 'Hoy es ${UtilidadesUtil.getFechaActual}';
+    imagenModulo = datosServicio['imagen'].toString();
     super.onInit();
   }
 
@@ -60,6 +62,8 @@ class EventosController extends GetxController {
   }
 
   guardarEvento() async {
+
+
     try {
       String path = dotenv.env['PATH_IMG_ELECCIONES'] ?? '';
 
@@ -92,7 +96,7 @@ class EventosController extends GetxController {
 
       bool resultInsert = await _apiServiciosRepository.registrarEvento(
         tipoEvento: selectDelito.value,
-        descripcion: "descripcion",
+        descripcion: descripcionController.text,
         imagen: nameCompletoImg,
       );
 
@@ -113,4 +117,5 @@ class EventosController extends GetxController {
       DialogosAwesome.getError(descripcion: e.toString());
     }
   }
+
 }

@@ -16,13 +16,13 @@ class MapaUpcPage extends GetView<MapaUpcController> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
-                height: 70,
+                padding: const EdgeInsets.all(10),
+                height: 50,
                 color: Colors.red,
                 child: const Row(
                   children: [
                     Icon(Icons.wifi_off),
-                    SizedBox(width: 10),
+                    SizedBox(width: 5),
                     Text(
                       'No tiene Conexión a Internet',
                       style: TextStyle(
@@ -34,9 +34,6 @@ class MapaUpcPage extends GetView<MapaUpcController> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              )
             ],
           ));
     });
@@ -45,6 +42,8 @@ class MapaUpcPage extends GetView<MapaUpcController> {
   getContenido(BuildContext context) {
     final responsive = ResponsiveUtil();
     return Scaffold(
+      bottomNavigationBar: bannerInferior(responsive),
+      appBar: getAppBar(),
       body: SafeArea(
           child: SingleChildScrollView(
               child: SizedBox(
@@ -54,7 +53,8 @@ class MapaUpcPage extends GetView<MapaUpcController> {
                     Obx(() =>
                     AppConfig.ubicacion.value.latitude != 0.0
                         ? GestureDetector(
-                      child: FlutterMap(
+                      child:
+                      Obx(() =>   FlutterMap(
                         mapController: controller.mapController,
                         options: MapOptions(
                             initialCenter: AppConfig.ubicacion.value,
@@ -85,7 +85,6 @@ class MapaUpcPage extends GetView<MapaUpcController> {
                           controller.datosUpc.isNotEmpty
                               ? getMarcadores(context)
                               : markerBlanco(context),
-                          getCabecera(),
                           warningWidgetGetX(),
                       Obx(() =>  controller.polylineCoords.isNotEmpty
                               ?   PolylineLayer(
@@ -103,13 +102,14 @@ class MapaUpcPage extends GetView<MapaUpcController> {
                           )
                               : Container()),
                         ],
-                      ),
+                      )),
+
                     )
                         : Container()),
                     Column(
                       children: [
                         SizedBox(
-                          height: responsive.altoP(65),
+                          height: responsive.altoP(55),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -138,51 +138,12 @@ class MapaUpcPage extends GetView<MapaUpcController> {
     );
   }
 
-  Widget getCabecera() {
-    final responsive = ResponsiveUtil();
-    return Container(
-      height: responsive.altoP(7),
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-
-          Center(
-            child: SizedBox(
-              width: responsive.altoP(18),
-              child: Image.asset(AppImages.imgCabecera2),
-            ),
-          ),
-          Container(
-            color: Colors.blue[900],
-            child: const Column(
-              children: <Widget>[
-                Divider(
-                  color: Colors.transparent,
-                  height: 5.0,
-                ),
-                Divider(
-                  color: Colors.transparent,
-                  height: 3.0,
-                ),
-                Divider(
-                  color: Colors.transparent,
-                  height: 3.0,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget getBtnZoom() {
     Widget wgZoom = Column(
       children: <Widget>[
         CustomMap.getBtnCustomIcon(
             icon: Icons.zoom_in,
-            colorIcon: Color(0xFF06245B),
+            colorIcon: Colors.blue.shade900,
             colorRelleno: controller.colorBtnRelleno,
             ontap: () {
               var centerZoom = controller.zoomMap;
@@ -200,7 +161,7 @@ class MapaUpcPage extends GetView<MapaUpcController> {
             size: controller.sizeBtnSobreMapa),
         CustomMap.getBtnCustomIcon(
             icon: Icons.zoom_out,
-            colorIcon: Color(0xFF06245B),
+            colorIcon: Colors.blue.shade900,
             colorRelleno: controller.colorBtnRelleno,
             ontap: () {
               var centerZoom = controller.zoomMap;
@@ -229,15 +190,16 @@ class MapaUpcPage extends GetView<MapaUpcController> {
       children: <Widget>[
         CustomMap.getBtnCustomIcon(
             icon: Icons.my_location,
-            colorIcon: Color(0xFF06245B),
+            colorIcon: Colors.blue.shade900,
             colorRelleno: controller.colorBtnRelleno,
             ontap: () {
+              controller.polylineCoords.clear();
               controller. consultarUpc();
             },
             size: controller.sizeBtnSobreMapa),
         CustomMap.getBtnCustomIcon(
             icon: Icons.filter_center_focus,
-            colorIcon: Color(0xFF06245B),
+            colorIcon: Colors.blue.shade900,
             colorRelleno: controller.colorBtnRelleno,
             ontap: () {
               controller.getBount();
@@ -358,5 +320,116 @@ class MapaUpcPage extends GetView<MapaUpcController> {
       height: 55,
       width: 55,
     );
+  }
+  getAppBar() {
+    return AppBar(
+      backgroundColor: Colors.blue[900],
+      title: const Text(
+        textAlign: TextAlign.center,
+        "Encuentra la Upc más cercana",
+        style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.white),
+      ),
+      leading: Builder(
+        builder: (BuildContext context) {
+          return Container(
+            margin: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              color: Colors.white,
+              iconSize: 30,
+              onPressed: () => Get.back(),
+              tooltip: 'Atrás',
+            ),
+          );
+
+        },
+      ),
+    );
+  }
+
+  Widget bannerInferior(ResponsiveUtil responsive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF001F54), Color(0xFF003580)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          imgBanner(
+            onTap: launchURLFace,
+            ruta: AppImages.imgFacebook,
+            responsive: responsive,
+          ),
+          imgBanner(
+            onTap: launchURLTwitter,
+            ruta: AppImages.imgTwitter,
+            responsive: responsive,
+          ),
+          imgBanner(
+            onTap: launchURLInsta,
+            ruta: AppImages.imgInstagran,
+            responsive: responsive,
+          ),
+          imgBanner(
+            onTap: launchURLYou,
+            ruta: AppImages.imgYoutube,
+            responsive: responsive,
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Future<void> launchURLFace() async {
+    final url = Uri.parse('https://www.facebook.com/policia.ecuador');
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+  static Future<void>  launchURLTwitter() async {
+    final url = Uri.parse('https://twitter.com/PoliciaEcuador');
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  static Future<void>  launchURLInsta() async {
+    final url = Uri.parse('https://www.instagram.com/policiaecuadoroficial');
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  static Future<void>  launchURLYou() async {
+    final url = Uri.parse('https://www.youtube.com/user/policiaecuador2');
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }

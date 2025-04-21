@@ -12,6 +12,15 @@ class ItemsApiImpl extends ItemsRepository {
     }
   }
 
+  @override
+  Future<List<ItemOffLine>> buscaDatosItemsOffline() async{
+    try {
+      return  await _itemsApiProviderImpl.buscaDatosItemsOffline();
+    }  catch (e){
+      throw ExceptionHelper.captureError(e);
+    }
+  }
+
 }
 
 

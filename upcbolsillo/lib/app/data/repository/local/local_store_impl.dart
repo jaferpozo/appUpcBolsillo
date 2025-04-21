@@ -58,4 +58,16 @@ class LocalStoreImpl extends LocalStorageRepository {
       listServicios: listServicios,
     );
   }
+
+  @override
+  Future<List<ItemOffLine>> getListItems() {
+    return _localStoreProviderImpl.getListItems();
+  }
+
+  @override
+  Future<bool> setDatosListaItems({required List<ItemOffLine> listItems}) async {
+    return _localStoreProviderImpl.setDatosListaItems(
+      listItems: listItems,
+    );
+  }
 }

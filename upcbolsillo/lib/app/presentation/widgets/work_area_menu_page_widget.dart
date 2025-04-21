@@ -160,53 +160,46 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
         ));
   }
 
-  Widget imgBanner(
-      {required GestureTapCallback onTap, required String ruta, required ResponsiveUtil responsive}) {
-    double size =
-    responsive.isVertical() ? responsive.altoP(8) : responsive.anchoP(8);
-    return Container(
-        height: size,
-        width: size,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            color: Colors.transparent,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image.asset(
-                ruta,
-              ),
-            ),
-          ),
-        ));
-  }
-
   Widget bannerInferior(ResponsiveUtil responsive) {
     return Container(
-      height: responsive.altoP(5),
-      color: Colors.blue[900],
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF001F54), Color(0xFF003580)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-
-        children: <Widget>[
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
           imgBanner(
-              onTap: launchURLFace,
-              ruta: AppImages.imgFacebook,
-              responsive: responsive),
+            onTap: launchURLFace,
+            ruta: AppImages.imgFacebook,
+            responsive: responsive,
+          ),
           imgBanner(
-              onTap: launchURLTwitter,
-              ruta: AppImages.imgTwitter,
-              responsive: responsive),
+            onTap: launchURLTwitter,
+            ruta: AppImages.imgTwitter,
+            responsive: responsive,
+          ),
           imgBanner(
-              onTap: launchURLInsta,
-              ruta: AppImages.imgInstagran,
-              responsive: responsive),
+            onTap: launchURLInsta,
+            ruta: AppImages.imgInstagran,
+            responsive: responsive,
+          ),
           imgBanner(
-              onTap: launchURLYou,
-              ruta: AppImages.imgYoutube,
-              responsive: responsive),
+            onTap: launchURLYou,
+            ruta: AppImages.imgYoutube,
+            responsive: responsive,
+          ),
         ],
       ),
     );
@@ -249,15 +242,6 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
   _buildDrawer(BuildContext context) {
     const String image = AppImages.imgEscpolicia;
     return ClipPath(
-
-      /// ---------------------------
-      /// Building Shape for drawer .
-      /// ---------------------------
-      // clipper: OvalRightBorderClipper(),
-
-      /// ---------------------------
-      /// Building drawer widget .
-      /// ---------------------------
       child: Drawer(
         child: Container(
           padding: const EdgeInsets.only(left: 16.0, right: 40),
@@ -459,63 +443,33 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
     );
   }
 
-  launchURLFace() async {
+
+  static Future<void> launchURLFace() async {
     final url = Uri.parse('https://www.facebook.com/policia.ecuador');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
-
-  launchURLTwitter() async {
+  static Future<void>  launchURLTwitter() async {
     final url = Uri.parse('https://twitter.com/PoliciaEcuador');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
 
-  launchURLInsta() async {
+  static Future<void>  launchURLInsta() async {
     final url = Uri.parse('https://www.instagram.com/policiaecuadoroficial');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
 
-  launchURLYou() async {
+  static Future<void>  launchURLYou() async {
     final url = Uri.parse('https://www.youtube.com/user/policiaecuador2');
-    if (await canLaunchUrl(url)) {
-      launchUrl(url);
-    } else {
-      print("Can't launch $url");
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      throw Exception('Could not launch $url');
     }
   }
 }
 
 
-/// ------------------
-/// for shaping the drawer. You can customize it as your own
-/// ------------------
-/*class OvalRightBorderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, 0);
-    path.lineTo(size.width - 50, 0);
-    path.quadraticBezierTo(
-        size.width, size.height / 4, size.width, size.height / 2);
-    path.quadraticBezierTo(size.width, size.height - (size.height / 4),
-        size.width - 60, size.height);
-    path.lineTo(0, size.height);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}*/

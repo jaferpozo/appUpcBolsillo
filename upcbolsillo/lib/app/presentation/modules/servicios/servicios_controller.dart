@@ -18,21 +18,24 @@ class ServiciosController extends GetxController {
         resumen: '',
         urlImagen: '',
       ).obs;
+
   RxList<Servicio> listaServicios = <Servicio>[].obs;
   final ItemsApiImpl _apiItemsRepository = Get.find<ItemsApiImpl>();
   Rx<Item> datosItemServicios = Item(descripcion: '', idUpcServitems: 0).obs;
   RxList<Item> listaItemsServicios = <Item>[].obs;
+  RxList<ItemOffLine> listaItemsServiciosTodos = <ItemOffLine>[].obs;
   String detalle = 'RECUERDE LO SIGUIENTE';
   RxList<String> listaDetalleItemsServicios = <String>[].obs;
 
   var datosServicio = Get.parameters;
+  String imagenModulo="";
   String fecha = "";
   String estadoConex = "";
   int id = 0;
   @override
   void onInit() {
     cargarDatosLista();
-    // TODO: el contolloler se ha creado pero la vista no se ha renderizado
+    cargarDatosListaItemsOffline();
     super.onInit();
   }
 
@@ -60,25 +63,23 @@ class ServiciosController extends GetxController {
         print('connected');
       } else {
         listaServicios.value = await _localStoreImpl.getListServicios();
+        listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
       }
     } on SocketException catch (_) {
       listaServicios.value = await _localStoreImpl.getListServicios();
-
+      listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
       estadoConex = 'N';
-      DialogosAwesome.getInformation(
-        descripcion:
-            'Usuario no ha registrado datos en el intervalo de fecha seleccionado',
-      );
     }
   }
 
   cargarDatosLista() async {
     try {
       id = int.parse(datosServicio['id'].toString());
-      print('sssssssssssss--' + id.toString());
+      imagenModulo = datosServicio['imagen'].toString();
       fecha = 'Hoy es ${UtilidadesUtil.getFechaActual}';
       listaServicios.clear();
       peticionServerState(true);
+
       listaServicios.value = await _apiServiciosRepository.buscaListaServicios(
         id,
       );
@@ -99,9 +100,8 @@ class ServiciosController extends GetxController {
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
-
       listaServicios.value = await _localStoreImpl.getListServicios();
-      // DialogosAwesome.getError(descripcion: e.cause);
+
     }
   }
 
@@ -119,11 +119,51 @@ class ServiciosController extends GetxController {
     }
   }
 
-  getDatosListaItems(int id) {
-    if (listaItemsServicios.isNotEmpty) {
-      for (int i = 0; i < listaItemsServicios.length; i++) {
-        listaDetalleItemsServicios.add(listaItemsServicios[i].descripcion);
+
+  cargarDatosListaItemsOffline() async {
+    try {
+      listaItemsServiciosTodos.clear();
+      peticionServerState(true);
+
+      listaItemsServiciosTodos.value = await _apiItemsRepository.buscaDatosItemsOffline();
+      print('TODOS----> ' + listaItemsServiciosTodos.length.toString());
+
+      if (listaItemsServiciosTodos.isEmpty) {
+        listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
+        return;
       }
+      await _localStoreImpl.setDatosListaItems(
+        listItems: listaItemsServiciosTodos.value,
+      );
+      print("ERROR---->4--"+listaItemsServiciosTodos.length.toString());
+      peticionServerState(false);
+    } on ServerException catch (e) {
+      peticionServerState(false);
+      var list =await _localStoreImpl.getListItems();
+      listaItemsServiciosTodos.value=list;
+
+    }
+  }
+  cargarDatosDetalleListaOffLine(int id) async {
+    try {
+      listaItemsServicios.clear();
+      listaItemsServiciosTodos.clear();
+      listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
+      peticionServerState(true);
+      for (var i = 0; i < listaItemsServiciosTodos.length; i++) {
+        if (listaItemsServiciosTodos[i].idUpcServicio == id) {
+          listaItemsServicios.add(
+              Item(
+                descripcion: listaItemsServiciosTodos[i].descripcion,
+                idUpcServitems: listaItemsServiciosTodos[i].idUpcServitems,
+              )
+          );
+        }
+      }
+      peticionServerState(false);
+    } on ServerException catch (e) {
+      peticionServerState(false);
+ 
     }
   }
 }

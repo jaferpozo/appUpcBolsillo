@@ -17,7 +17,36 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
       ),
     );
   }
-
+  warningWidgetGetX() {
+    controller.connectionStatusController();
+    return Obx(() {
+      return Visibility(
+          visible: controller.status.value != ConnectionStatus.online,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                height: 40,
+                color: Colors.red,
+                child: const Row(
+                  children: [
+                    Icon(Icons.wifi_off),
+                    SizedBox(width: 5),
+                    Text(
+                      'No tiene Conexión a Internet',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ));
+    });
+  }
   getContenido() {
     final responsive = ResponsiveUtil();
     return Stack(
@@ -45,38 +74,6 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
     );
   }
 
-  warningWidgetGetX() {
-    controller.connectionStatusController();
-    return Obx(() {
-      return Visibility(
-        visible: controller.status.value != ConnectionStatus.online,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              height: 70,
-              color: Colors.red,
-              child: const Row(
-                children: [
-                  Icon(Icons.wifi_off),
-                  SizedBox(width: 10),
-                  Text(
-                    'No tiene Conexión a Internet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      );
-    });
-  }
 
   getListaDatosModulos() {
     final responsive = ResponsiveUtil();
@@ -88,16 +85,12 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
         return Obx(
           () => InkWell(
             onTap: () => {
-
               muestraPantalla(ind, context)
-
-
             },
             child: Column(
               children: [
                 SizedBox(
                   width: responsive.anchoP(90),
-
                   child: Column(
                     children: [
                       Row(
@@ -105,13 +98,13 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
                         children: [
                           SizedBox(width: responsive.anchoP(2.0)),
                           imgPerfilRedonda(
-                            size: 18,
+                            size: 22,
                             img:
                                 controller.listaModulo[ind].imgBase64 == ''
                                     ? null
                                     : controller.listaModulo[ind].imgBase64,
                           ),
-                          SizedBox(width: responsive.anchoP(4)),
+                          SizedBox(width: responsive.anchoP(6)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -122,7 +115,7 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
                                   controller.listaModulo[ind].tituloModulo
                                       .toUpperCase(),
                                   style: TextStyle(
-                                    fontSize: responsive.diagonalP(1.5),
+                                    fontSize: responsive.diagonalP(1.7),
                                     fontWeight: FontWeight.w700,
                                     color: Colors.blue[900],
                                   ),
@@ -212,133 +205,31 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
 
   muestraPantalla(index, BuildContext ctx) async {
     if (index == 0) {
-      controller.verificarGps();
+     if( controller.status==ConnectionStatus.online){
+       controller.verificarGps();
+     }else{
+       DialogosAwesome.getError(descripcion: "No tiene Conexión a Internet");
+     }
     }
     if (index == 1) {
-      Get.toNamed(AppRoutes.REGISTRAR_EVENTO, );
-
-
+      if( controller.status==ConnectionStatus.online){
+        Map<String, String> data = {
+          "id": "1",
+          "imagen":controller.listaModulo[1].imgBase64
+        };
+        Get.toNamed(AppRoutes.REGISTRAR_EVENTO, parameters: data );
+      }else{
+        DialogosAwesome.getError(descripcion: "No tiene Conexión a Internet para registrar un evento");
+      }
     }
     if (index == 2) {
-      Map<String, String> data = {"id": "2"};
-      Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
-      String _ip = await UtilidadesUtil.getNetworkInfo();
-    }
-    if (index == 3) {
-      Map<String, String> data = {"id": "1"};
-      //vehiculos
-      Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
-      String _ip = await UtilidadesUtil.getNetworkInfo();
-    }
-    if (index == 4) {
-      Map<String, String> data = {"id": "2"};
-      Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
-      //AlertasWidget.alertaBannerCovid(ctxt: ctx);
-      // Navigator.pushNamed(context, AppConfig.PhotoPreviewScreen);
-    }
-    if (index == 6) {
-      //servicios
-      String _ip = await UtilidadesUtil.getNetworkInfo();
-    }
-    if (index == 7) {
-      //tips
-
-      String _ip = await UtilidadesUtil.getNetworkInfo();
+      Map<String, String> data = {
+        "id": "2",
+        "imagen":controller.listaModulo[2].imgBase64
+      };
+     Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
     }
 
-    if (index == 8) {
-      // registreToken();
-      //noticias
-
-      String _ip = await UtilidadesUtil.getNetworkInfo();
-    }
-
-    if (index == 66) {
-      //desaparecidos
-
-      String _ip = await UtilidadesUtil.getNetworkInfo();
-    }
   }
 
-  static void llamarEcu(BuildContext ctx) async {
-    final Uri launchUri = Uri(scheme: 'tel', path: '911');
-    await launchUrl(launchUri);
-  }
-
-  getContenidoSinInternet() {
-    final responsive = ResponsiveUtil();
-    return Stack(
-      children: [
-        Column(
-          children: [
-            getCabecera(responsive),
-            SizedBox(height: responsive.altoP(5)),
-            Container(
-              height: responsive.altoP(5),
-              child: Image.asset(AppImages.imgNoWifi),
-            ),
-            SizedBox(height: responsive.altoP(5)),
-            const Text(
-              'No tiene Conexión a Internet',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: responsive.altoP(2)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget btnR() {
-    final responsive = ResponsiveUtil();
-    return Column(
-      children: [
-        SizedBox(height: responsive.altoP(5)),
-        Container(
-          height: responsive.altoP(25),
-          child: Image.asset(AppImages.imgSiWifi),
-        ),
-        SizedBox(height: responsive.altoP(5)),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 50),
-          child: Text(
-            'La Conexión a Internet esta restablecida favor Cargue los Módulos de Mi Upc',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        SizedBox(height: responsive.altoP(2)),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 50),
-          width: double.infinity,
-          child: MaterialButton(
-            elevation: 1.0,
-            onPressed: () => controller.cargarDatosLista(),
-            padding: EdgeInsets.all(15.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            color: Colors.blueGrey[100],
-            child: Text(
-              'Consultar Módulos',
-              style: TextStyle(
-                color: AppConfig.colorBarras,
-                letterSpacing: 1.5,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'OpenSans',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }

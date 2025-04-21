@@ -107,7 +107,8 @@ class _WorkAreaRegistroPageWidgetState extends State<WorkAreaRegistroPageWidget>
             width: responsive.altoP(1),
           ),
           BtnIconWidget(
-            onTap: () => {},
+            onTap: () async {
+            },
             iconData: Icons.search, color: Colors.white,
           ),
         ],

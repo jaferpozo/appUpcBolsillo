@@ -21,6 +21,9 @@ abstract class LocalStorageRepository{
   Future<List<Servicio>> getListServicios();
   Future<bool> setDatosListaServicios( {required List<Servicio>  listServicios});
 
+  Future<List<ItemOffLine>> getListItems();
+  Future<bool> setDatosListaItems( {required List<ItemOffLine>  listItems});
+
 
 
 

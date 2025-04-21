@@ -6,8 +6,8 @@ class EventosPage extends GetView<EventosController> {
   @override
   Widget build(BuildContext context) {
     return WorkAreaItemsPageWidget(
-      btnAtras: true,
-
+      titleAppBar: 'Botón de Emergencia',
+      btnAtras: false,
       peticionServer: controller.peticionServerState,
       contenido: getContenido(),
     );
@@ -15,38 +15,28 @@ class EventosPage extends GetView<EventosController> {
 
   getContenido() {
     final responsive = ResponsiveUtil();
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppImages.imgFondo),
-                  fit: BoxFit.cover,
-                ),
+    return  Column(
+        children: [
+          Stack(
+            children: [
+              Column(
+                children: [
+                  getCabecera(responsive),
+                  SizedBox(
+                    width: responsive.anchoP(88),
+                    child: getDesingContenido(),
+                  ),
+                ],
               ),
-            ),
-            Stack(
-              children: [
-                Column(
-                  children: [
-                    getCabecera(responsive),
-                    SizedBox(
-                      width: responsive.anchoP(88),
-                      height: responsive.altoP(76),
-                      child: getDesingContenido(),
-                    ),
-                  ],
-                ),
-                warningWidgetGetX(),
-              ],
-            ),
-          ],
-        ),
-      ],
+              warningWidgetGetX(),
+            ],
+          ),
+        ],
+
     );
   }
+
+
 
   warningWidgetGetX() {
     controller.connectionStatusController();
@@ -81,8 +71,6 @@ class EventosPage extends GetView<EventosController> {
     });
   }
 
-
-
   getCabecera(ResponsiveUtil responsive) {
     return Column(
       children: [
@@ -92,10 +80,11 @@ class EventosPage extends GetView<EventosController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Center(
-                child: SizedBox(
-                  width: responsive.altoP(20),
-                  child: Image.asset(AppImages.imgCabecera2),
-                ),
+                child: ImagenBase64Widget(
+                  base64String: controller.imagenModulo,
+                  height: responsive.altoP(10),
+                  isCircular: true, // Para redondear como avatar
+                )
               ),
               Container(
                 color: Colors.blue[900],
@@ -129,51 +118,73 @@ class EventosPage extends GetView<EventosController> {
 
 
   getDesingContenido(){
-    return Container(
-
-
+    return
+      SingleChildScrollView( // 👈 scroll general para toda la pantalla
+        child:
+      Container(
       child: Column(children: [
       SizedBox(height: 5,),
       ComboBusqueda(
         selectValue: controller.selectDelito.value,
-
         showClearButton: false,
         datos: controller.listDelito,
         displayField:
             (item) =>
         item, // Aquí decides mostrar "nombres"
-        searchHint: "Delito",
+        searchHint: "Selecione un Delito",
         complete: (value) {
           controller.selectDelito.value = "";
-          controller.mostrarBtnGuardar(false);
+          controller.mostrarBtnGuardar(true);
           if (value != null) {
             controller.selectDelito.value = value;
             return;
           }
         },
-        textSeleccioneUndato: "Seleccione el Delito",
+        textSeleccioneUndato: "Selecione un Delito",
       ),
         SizedBox(height: 15,),
-      Text("AQUI EL DISEÑO DE LA DESCRIPCION "),
-      SizedBox(height: 15,),
-     Obx(()=>controller.selectDelito.value.length>0? wgFoto():Container()),
+        Container(
+          width: double.infinity,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Observación',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        SizedBox(height: 1),
+        ContadorTextArea(
+          maxLength: 100,
+          controller: controller.descripcionController,
+          onChanged: (texto) {
 
+          },
+        ),
+        SizedBox(height: 5,),
+     Obx(()=>controller.selectDelito.value.length>0? wgFoto():Container()),
         SizedBox(height: 15,),
         btnGuardar(),
 
-    ],),);
+    ],),));
   }
 
 Widget btnGuardar(){
     return Obx(()=>
     controller.selectDelito.value.length>0?controller.mGaleryCameraModel.value!=null?
-
     BtnIconWidget(
-        size: 18,
+        size: 20,
         title: "GUARDAR",
-        onTap: (){
-      controller.guardarEvento();
-        }, iconData: Icons.save, color: Colors.blue):Container():Container());
+      onTap: () async {
+        await controller.guardarEvento();
+      },
+        iconData: Icons.save,
+        color: Colors.blue[900]!,
+      colorTextoIcon: Colors.white,
+    )
+        :Container():Container());
 }
 
   Widget wgFoto() {
@@ -201,9 +212,9 @@ Widget btnGuardar(){
             },
             child: Container(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
+
                 child: Image.asset(
-                  AppImages.imgInstagran,
+                  AppImages.imgFoto,
                   width: responsive.altoP(6.0),
                 ),
               ),
@@ -224,11 +235,7 @@ Widget btnGuardar(){
         SizedBox(height: responsive.altoP(1)),
       ],
     );
-
     Widget wg = wgSolicitarFoto;
-
-
-
     return ContenedorDesingWidget(margin: EdgeInsets.only(top: 10), child: wg);
   }
 

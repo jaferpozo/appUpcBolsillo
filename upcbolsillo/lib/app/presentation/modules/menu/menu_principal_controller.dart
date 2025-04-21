@@ -17,9 +17,6 @@ class MenuPrincipalController extends GetxController {
       .obs;
   RxList<Modulo> listaModulo = <Modulo>[].obs;
 
-  String general1 = "", general2 = "", imagen = "";
-  String n1 = "", n2 = "", n3 = "", n4 = "", n5 = "", n6 = "", n7 = "", n8 = "";
-
   //variable para que solo carge una vez los datos
   String nombre = '';
   String cedula = '';
@@ -63,13 +60,16 @@ class MenuPrincipalController extends GetxController {
     bool verificarGps = await gpsController.verificarGPS();
     if (verificarGps) {
       gpsController.iniciarSeguimiento();
-     // iniciarSeguimiento1();
       if (AppConfig.ubicacion.value.latitude==0.0) {
         DialogosAwesome.getInformation(
             descripcion: "Las coordenas aun no estan lista vuelva a intentar");
       }else{
         gpsController.cancelarSeguimiento();
-        Get.toNamed(AppRoutes.MAPAUPC);
+        Map<String, String> data = {
+          "id": "0",
+          "imagen":listaModulo[0].imgBase64
+        };
+        Get.toNamed(AppRoutes.MAPAUPC,parameters: data);
 
       }
     }
@@ -83,7 +83,6 @@ class MenuPrincipalController extends GetxController {
       verificaTConexion();
     }
     else{
-
       //cambiar
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
@@ -91,12 +90,10 @@ class MenuPrincipalController extends GetxController {
     }
 
   }
-
   verificaTConexion() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
         print('connected');
         cargarDatosLista();
       }
@@ -108,9 +105,6 @@ class MenuPrincipalController extends GetxController {
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
       print("tengo estos modulos ${list.length}");
-
-
-
     }
   }
 
@@ -128,15 +122,11 @@ class MenuPrincipalController extends GetxController {
         listaModulo.value=list;
         return;
       }
-
-
       _localStoreImpl.setDatosListaModulos(listModulos: listaModulo.value);
 
       peticionServerState(false);
    } on ServerException catch (e) {
       peticionServerState(false);
-     // DialogosAwesome.getError(descripcion: e.cause);
-
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
       print("tengo estos modulos ${list.length}");

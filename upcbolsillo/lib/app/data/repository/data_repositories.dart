@@ -5,6 +5,7 @@ import '../../core/exceptions/exception_helper.dart';
 import '../../data/providers/providers_impl.dart';
 import '../../domain/repositories/domain_repositories.dart';
 import '../models/items.dart';
+import '../models/itemsOffLine.dart';
 import '../models/modulos.dart';
 import '../models/servicios.dart';
 import '../models/upc.dart';

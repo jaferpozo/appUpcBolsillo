@@ -47,6 +47,8 @@ class AppImages{
   static const imgYoutube = _rutaImg+ "youtube.png";
   static const imgTwitter = _rutaImg+ "twitter.png";
   static const imgInstagran = _rutaImg+ "instagran.png";
+  static const imgEdificio = _rutaImg+ "upedificio.png";
+  static const imgFoto = _rutaImg+ "foto.png";
 
   static const imgFlechaDerecha = _rutaImg+ "flecha_derecha.png";
   static const imgEcu911 = _rutaImg+ "ecu911.png";

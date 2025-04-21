@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -15,7 +17,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/app_config.dart';
 import '../../core/utils/photo_helper.dart';
-import '../../core/utils/preferenciasUsuario.dart';
 import '../../core/utils/responsiveUtil.dart';
 import '../../core/utils/utilidadesUtil.dart';
 import '../../core/values/app_colors.dart';
@@ -50,8 +51,12 @@ part 'tituloTextWidget.dart';
 part 'botones2Widget.dart';
 part 'customMap.dart';
 part 'markerWidget.dart';
-
+part 'imagenBase64Widget.dart';
 part 'combos/combo_busqueda.dart';
 part 'combos/combo_con_busqueda.dart';
+part 'contadorTextArea.dart';
+part 'botonSeleccionarFoto.dart';
+part 'bouncingMarker.dart';
+part 'imgBanner.dart';
 
 

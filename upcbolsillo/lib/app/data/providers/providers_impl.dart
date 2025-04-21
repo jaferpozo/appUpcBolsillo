@@ -24,6 +24,7 @@ import '../../core/exceptions/exceptions.dart';
 import '../../core/utils/prints_msj.dart';
 import '../../domain/repositories/domain_repositories.dart';
 import '../models/items.dart';
+import '../models/itemsOffLine.dart';
 import '../models/models.dart';
 import '../models/modulos.dart';
 import '../models/servicios.dart';

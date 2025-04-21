@@ -13,6 +13,7 @@ class RegistroUsuarioPage extends GetView<RegistroUsuarioController> {
 
      final responsive = ResponsiveUtil();
      return Scaffold(
+       appBar: getAppBar(),
   body: SafeArea(
     child: Stack(
       children: <Widget>[
@@ -50,25 +51,12 @@ class RegistroUsuarioPage extends GetView<RegistroUsuarioController> {
                           color: Colors.transparent,
                         ),
                         Text(
-                          'LA POLICÍA NACIONAL DEL ECUADOR',
+                          'REGISTRO DE USUARIO',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
                               color: AppConfig.colorBarras),
-                        ),
-                        const Divider(
-                          height: 5.0,
-                          color: Colors.transparent,
-                        ),
-                        Text(
-                          'Le da la más Cordial Bienvenida a su aplicativo\n' +'MI UPC',
-
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 15,
-                              color: Colors.black),
                         ),
                         Divider(
                           height: 5.0,
@@ -128,7 +116,45 @@ class RegistroUsuarioPage extends GetView<RegistroUsuarioController> {
           ],
         )) ;
   }
+  getAppBar() {
+    return AppBar(
+      backgroundColor: Colors.blue[900],
+      title: const Text(
+        textAlign: TextAlign.center,
+        "Registro de Usuario",
+        style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.white),
+      ),
+      leading: Builder(
+        builder: (BuildContext context) {
+          return Container(
+            margin: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              color: Colors.white,
+              iconSize: 30,
+              onPressed: () => Get.back(),
+              tooltip: 'Atrás',
+            ),
+          );
 
+        },
+      ),
+    );
+  }
   Widget getCampos(ResponsiveUtil responsive) {
     return SingleChildScrollView(child: Container(
         child:Column(

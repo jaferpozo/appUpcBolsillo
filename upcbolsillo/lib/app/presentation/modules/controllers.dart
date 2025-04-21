@@ -4,6 +4,8 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,6 +18,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
 
 
@@ -32,6 +35,7 @@ import '../../core/utils/photo_helper.dart';
 import '../../core/utils/utilidadesUtil.dart';
 import '../../core/values/app_images.dart';
 import '../../data/models/items.dart';
+import '../../data/models/itemsOffLine.dart';
 import '../../data/models/models.dart';
 import '../../data/models/modulos.dart';
 import '../../data/models/servicios.dart';

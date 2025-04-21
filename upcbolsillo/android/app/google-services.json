@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "69644905660",
+    "project_id": "upcbolsillo",
+    "storage_bucket": "upcbolsillo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69644905660:android:15eaaaea0da42e2df2f4b9",
+        "android_client_info": {
+          "package_name": "com.example.upcbolsillo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC3eLIJdZ_c6PJd2EFMeTe3lBgiGxlQWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,8 +6,8 @@ class ServiciosPage extends GetView<ServiciosController> {
   @override
   Widget build(BuildContext context) {
     return WorkAreaItemsPageWidget(
-      btnAtras: true,
-
+      titleAppBar: 'Medidas de Autoprotección',
+      btnAtras: false,
       peticionServer: controller.peticionServerState,
       contenido: getContenido(),
     );
@@ -19,14 +19,7 @@ class ServiciosPage extends GetView<ServiciosController> {
       children: [
         Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppImages.imgFondo),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+
             Stack(
               children: [
                 Column(
@@ -34,7 +27,7 @@ class ServiciosPage extends GetView<ServiciosController> {
                     getCabecera(responsive),
                     SizedBox(
                       width: responsive.anchoP(88),
-                      height: responsive.altoP(76),
+                      height: responsive.altoP(68),
                       child: Obx(() => getListaServicios()),
                     ),
                   ],
@@ -56,8 +49,8 @@ class ServiciosPage extends GetView<ServiciosController> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
-              height: 70,
+              padding: const EdgeInsets.all(10),
+              height: 40,
               color: Colors.red,
               child: const Row(
                 children: [
@@ -105,7 +98,7 @@ class ServiciosPage extends GetView<ServiciosController> {
                         children: [
                           SizedBox(width: resposnsive.anchoP(2.0)),
                           imgPerfilRedonda(
-                            size: 18,
+                            size: 20,
                             img:
                                 controller.listaServicios[ind].imgBase64 == ''
                                     ? null
@@ -154,10 +147,11 @@ class ServiciosPage extends GetView<ServiciosController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Center(
-                child: SizedBox(
-                  width: responsive.altoP(20),
-                  child: Image.asset(AppImages.imgCabecera2),
-                ),
+                child:   ImagenBase64Widget(
+                  base64String: controller.imagenModulo,
+                  height: responsive.altoP(12),
+                  isCircular: true, // Para redondear como avatar
+                )
               ),
               Container(
                 color: Colors.blue[900],
@@ -193,9 +187,7 @@ class ServiciosPage extends GetView<ServiciosController> {
     String img = controller.listaServicios[ind].imgBase64;
     int id = controller.listaServicios[ind].idUpcServicio;
     String servicio = controller.listaServicios[ind].descripcion;
-    print("getlistaaaaa");
-    await controller.cargarDatosDetalleLista(id);
-
+    controller.status.value== ConnectionStatus.online? await controller.cargarDatosDetalleLista(id): controller.cargarDatosDetalleListaOffLine(id);
     DialogosAwesome.getAlertDetalleServicios(
       body: bodyDetlleListaServicios(resumen, servicio),
       imagen: img,

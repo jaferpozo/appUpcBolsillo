@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import '../../data/models/items.dart';
+import '../../data/models/itemsOffLine.dart';
 import '../../data/models/modulos.dart';
 import '../../data/models/servicios.dart';
 import '../../data/models/upc.dart';

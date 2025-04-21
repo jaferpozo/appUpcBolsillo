@@ -29,15 +29,6 @@ class _imgPerfilRedondaState extends State<imgPerfilRedonda> {
       height: responsive.isVertical()
           ? responsive.anchoP(widget.size)
           : responsive.anchoP(widget.size - 8),
-    /*  decoration: BoxDecoration(
-        border: Border.all(
-          color: const Color(0xFF6E6506),
-          style: BorderStyle.solid,
-          width: 4.0,
-        ),
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(200.0),
-      ),*/
       child: imgMemory != null
           ? Container(
         decoration: BoxDecoration(

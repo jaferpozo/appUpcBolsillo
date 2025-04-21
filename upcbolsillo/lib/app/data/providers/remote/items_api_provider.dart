@@ -13,6 +13,18 @@ class ItemsApiProviderImpl extends ItemsRepository {
     }
   }
 
+  @override
+  Future<List<ItemOffLine>> buscaDatosItemsOffline() async {
+    try {
+      String segmento="polco/index.php?opc=79455fc0aa4fa00402e1d4f8160eb21e&modulo=ddced13c854fb2c03d6e01ce5bfd7e08";
+      String json = await UrlApiProvider.get(segmento: segmento);
+      List<ItemOffLine> data= itemsServiciosMiupcOffLineFromJson(json).upcServitemsOffLine.items;
+      return data;
+    } catch (e) {
+      throw ExceptionHelper.captureError(e);
+    }
+  }
+
 
 
 

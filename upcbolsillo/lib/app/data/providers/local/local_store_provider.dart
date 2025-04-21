@@ -6,6 +6,8 @@ const _PREF_USUARIO = 'USER';
 const _PREF_MAIL = 'MAIL';
 const _PREF_ACUERDO = 'ACUERDO';
 
+const _PREF_ITEMS = 'ITEMS';
+
 const _PREF_LIST_MODULOS = 'LIST_MODULO';
 const _PREF_LIST_SERVICIOS = 'LIST_SERVICIOS';
 
@@ -73,9 +75,6 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
     if(_json.length==0){
       return [];
     }
-
-
-    print("Obteniendo Datos");
     log(_json);
 
     Map<String, dynamic> datos = json.decode(_json);
@@ -87,10 +86,7 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
     Map<String, dynamic> toJson() => {
       "datos": List<dynamic>.from(listModulos.map((x) => x.toJson())),
     };
-
     String datos = json.encode(toJson());
-
-    print("Guardando Datos");
     log(datos);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -106,8 +102,6 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
     if(_json.length==0){
       return [];
     }
-
-    print("Obteniendo Datos");
     log(_json);
 
     Map<String, dynamic> datos = json.decode(_json);
@@ -125,7 +119,33 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
     String datos = json.encode(toJson());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(_PREF_LIST_SERVICIOS, datos);
+    return true;
+  }
 
+  @override
+  Future<List<ItemOffLine>> getListItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _json = prefs.getString(_PREF_ITEMS) ?? '';
+
+    if(_json.length==0){
+      return [];
+    }
+    log(_json);
+
+    Map<String, dynamic> datos = json.decode(_json);
+    return List<ItemOffLine>.from(datos["datos"].map((x) => ItemOffLine.fromJson(x)));
+  }
+
+
+  @override
+  Future<bool> setDatosListaItems({required List<ItemOffLine> listItems}) async {
+    Map<String, dynamic> toJson() => {
+      "datos": List<dynamic>.from(listItems.map((x) => x.toJson())),
+    };
+
+    String datos = json.encode(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_ITEMS, datos);
     return true;
   }
 }
