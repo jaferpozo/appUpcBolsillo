@@ -70,4 +70,14 @@ class LocalStoreImpl extends LocalStorageRepository {
       listItems: listItems,
     );
   }
+
+  @override
+  Future<Uint8List?> getFoto() async {
+    return _localStoreProviderImpl.getFoto();
+  }
+
+  @override
+  Future<void> setFoto(Uint8List imageBytes) async {
+    return _localStoreProviderImpl.setFoto(imageBytes);
+  }
 }

@@ -45,7 +45,7 @@ class EventosController extends GetxController {
   String fecha = "";
   String estadoConex = "";
   int id = 0;
-
+  bool _notificacionesIniciadas = false;
   @override
   void onInit() {
     fecha = 'Hoy es ${UtilidadesUtil.getFechaActual}';
@@ -57,6 +57,10 @@ class EventosController extends GetxController {
   void onReady() {
     // TODO: Donde la vista ya se presento
     _init();
+    if (!_notificacionesIniciadas) {
+      _initNotificaciones();
+      _notificacionesIniciadas = true;
+    }
   }
 
   _init() async {
@@ -65,7 +69,7 @@ class EventosController extends GetxController {
 
   connectionStatusController() {
     connectionSubscription = internetChecker.internetStatus().listen(
-      (newStatus) => status.value = newStatus,
+          (newStatus) => status.value = newStatus,
     );
   }
 
@@ -106,23 +110,23 @@ class EventosController extends GetxController {
         descripcion: descripcionController.text,
         imagen: nameCompletoImg,
       );
-      // ► Envía la notificación
-      final ok = await sendEventNotification(
-        title: 'Nuevo Evento Registrado',
-        body: 'Tipo de delito: ${selectDelito.value}',
-      );
-      if (!ok) {
-        debugPrint('La push no se envió correctamente.');
+
+     if (resultInsert) {
+       DialogosAwesome.getSucess(
+         descripcion: "Notificación enviada",
+         title: "REGISTRO CORRECTO",
+         btnOkOnPress: () {
+           peticionServerState(false);
+           Get.back();
+           Get.back();
+         },
+       );
+
       } else {
         DialogosAwesome.getWarning(descripcion: "INTENTE OTRA VEZ");
+        peticionServerState(false);
       }
       peticionServerState(false);
-
-      if (resultInsert) {
-        DialogosAwesome.getSucess(descripcion: "REGISTRADO");
-      } else {
-        DialogosAwesome.getWarning(descripcion: "INTENTE OTRA VEZ");
-      }
     } on ServerException catch (e) {
       peticionServerState(false);
       DialogosAwesome.getError(descripcion: e.cause);
@@ -132,41 +136,75 @@ class EventosController extends GetxController {
     }
   }
 
-  /// Suscribe al dispositivo al topic 'eventos'
-  Future<void> subscribeToTopic() async {
-    await FirebaseMessaging.instance.subscribeToTopic('eventos');
+  void _initNotificaciones() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+    await messaging.subscribeToTopic('upceventos1');
+    debugPrint("✅ Suscrito al topic 'upceventos1'");
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final titulo = message.notification?.title ?? "Sin título";
+      final cuerpo = message.notification?.body ?? "Sin cuerpo";
+      debugPrint("Notificación recibida: $titulo - $cuerpo");
+      if (titulo.toString()=="WEB"){
+        mostrarSnackbarConEstilo(
+          titulo: titulo,
+          mensaje: cuerpo,
+          icono: Icons.notifications_active_sharp,
+          colorFondo: Colors.red,
+          colorTexto: Colors.white,
+        );
+      }else if(titulo.toString()=="SEGUIMIENTO"){
+        mostrarSnackbarConEstilo(
+          titulo: titulo,
+          mensaje: cuerpo,
+          icono: Icons.notification_add_outlined,
+          colorFondo: Colors.amber,
+          colorTexto: Colors.black,
+        );
+      }
+      else{
+
+      }
+    });
   }
 
-  /// Envía una notificación al topic 'eventos'
-  Future<bool> sendEventNotification({
-    required String title,
-    required String body,
-  }) async {
-    await subscribeToTopic();
-    final String _serverKey = dotenv.env['FCM_SERVER_KEY']!;
-    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'key=$_serverKey',
-    };
-    final payload = {
-      'to': '/topics/eventos',
-      'priority': 'high',
-      'notification': {'title': title, 'body': body, 'sound': 'default'},
-    };
 
-    final res = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode(payload),
+  void mostrarSnackbarConEstilo({
+    required String titulo,
+    required String mensaje,
+    IconData icono = Icons.notifications,
+    Color colorFondo = Colors.white,
+    Color colorTexto = Colors.black,
+    Duration duracion = const Duration(seconds: 5),
+  }) {
+    Get.snackbar(
+      titulo,
+      mensaje,
+      icon: Icon(icono, color: Colors.white),
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: colorFondo.withOpacity(0.95),
+      colorText: colorTexto,
+      borderRadius: 12,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.all(16),
+      animationDuration: const Duration(milliseconds: 500),
+      duration: duracion,
+      forwardAnimationCurve: Curves.easeOutBack,
+      reverseAnimationCurve: Curves.easeInBack,
+      overlayBlur: 1.5,
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 4),
+          blurRadius: 10,
+        ),
+      ],
+      shouldIconPulse: true,
+      isDismissible: true,
+      dismissDirection: DismissDirection.horizontal,
     );
 
-    if (res.statusCode == 200) {
-      debugPrint('✅ Push enviada: ${res.body}');
-      return true;
-    } else {
-      debugPrint('❌ Error (${res.statusCode}): ${res.body}');
-      return false;
-    }
   }
+
 }
+

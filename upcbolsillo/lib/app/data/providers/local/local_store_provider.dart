@@ -7,7 +7,7 @@ const _PREF_MAIL = 'MAIL';
 const _PREF_ACUERDO = 'ACUERDO';
 
 const _PREF_ITEMS = 'ITEMS';
-
+const _PREF_FOTO='FOTO';
 const _PREF_LIST_MODULOS = 'LIST_MODULO';
 const _PREF_LIST_SERVICIOS = 'LIST_SERVICIOS';
 
@@ -148,4 +148,23 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
     prefs.setString(_PREF_ITEMS, datos);
     return true;
   }
+
+  @override
+  Future<Uint8List?> getFoto() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? base64String = prefs.getString(_PREF_FOTO);
+    if (base64String != null) {
+      return base64Decode(base64String);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> setFoto(Uint8List imageBytes) async {
+    final prefs = await SharedPreferences.getInstance();
+    String base64String = base64Encode(imageBytes); // Convertir los bytes en base64
+    await prefs.setString(_PREF_FOTO, base64String); // Guardar como string
+  }
+
 }

@@ -8,34 +8,35 @@ class MapaUpcPage extends GetView<MapaUpcController> {
     );
   }
 
-  warningWidgetGetX() {
+  Widget warningWidgetGetX() {
     controller.connectionStatusController();
     return Obx(() {
-      return Visibility(
-          visible: controller.status.value != ConnectionStatus.online,
-          child: Column(
+      final online = controller.status.value == ConnectionStatus.online;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        height: online ? 0 : 40,
+        child: online
+            ? const SizedBox.shrink()
+            : Container(
+          width: double.infinity,
+          color: Colors.redAccent,
+          alignment: Alignment.center,
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                height: 50,
-                color: Colors.red,
-                child: const Row(
-                  children: [
-                    Icon(Icons.wifi_off),
-                    SizedBox(width: 5),
-                    Text(
-                      'No tiene Conexión a Internet',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+              Icon(Icons.wifi_off, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                'Sin conexión a Internet',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
-          ));
+          ),
+        ),
+      );
     });
   }
 
@@ -43,7 +44,7 @@ class MapaUpcPage extends GetView<MapaUpcController> {
     final responsive = ResponsiveUtil();
     return Scaffold(
       bottomNavigationBar: bannerInferior(responsive),
-      appBar: getAppBar(),
+      appBar: getAppBar('Encuentra la Upc más cercana'),
       body: SafeArea(
           child: SingleChildScrollView(
               child: SizedBox(
@@ -321,41 +322,54 @@ class MapaUpcPage extends GetView<MapaUpcController> {
       width: 55,
     );
   }
-  getAppBar() {
+  AppBar getAppBar(String titleAppBar) {
     return AppBar(
-      backgroundColor: Colors.blue[900],
-      title: const Text(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [  Color(0xFF06245B), Colors.grey.shade600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+      ),
+      title: Text(
+        titleAppBar,
         textAlign: TextAlign.center,
-        "Encuentra la Upc más cercana",
-        style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.white),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
       ),
       leading: Builder(
         builder: (BuildContext context) {
           return Container(
             margin: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: Colors.transparent,
                   blurRadius: 4,
                   offset: Offset(0, 2),
                 ),
               ],
             ),
-            child: IconButton(
+            child:IconButton(
               icon: const Icon(Icons.arrow_back),
-              color: Colors.white,
               iconSize: 30,
-              onPressed: () => Get.back(),
+              color: Colors.white,
               tooltip: 'Atrás',
+              onPressed: () => Get.back(),
             ),
           );
-
         },
       ),
     );
@@ -363,49 +377,81 @@ class MapaUpcPage extends GetView<MapaUpcController> {
 
   Widget bannerInferior(ResponsiveUtil responsive) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF001F54), Color(0xFF003580)],
+          colors: [   Colors.grey,Color(0xFF06245B),],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        color: Color(0xFF0A2A66), // mismo tono que AppBar o complementario
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
+            color: Colors.black45,
+            blurRadius: 8,
             offset: Offset(0, -2),
           ),
         ],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(22),
+          topRight: Radius.circular(22),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgFacebook,
             onTap: launchURLFace,
-            ruta: AppImages.imgFacebook,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgTwitter,
             onTap: launchURLTwitter,
-            ruta: AppImages.imgTwitter,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgInstagran,
             onTap: launchURLInsta,
-            ruta: AppImages.imgInstagran,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgYoutube,
             onTap: launchURLYou,
-            ruta: AppImages.imgYoutube,
-            responsive: responsive,
           ),
         ],
       ),
     );
   }
 
+  Widget socialIconButton({
+    required String iconPath,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white30, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Image.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+
+        ),
+      ),
+    );
+  }
   static Future<void> launchURLFace() async {
     final url = Uri.parse('https://www.facebook.com/policia.ecuador');
     if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {

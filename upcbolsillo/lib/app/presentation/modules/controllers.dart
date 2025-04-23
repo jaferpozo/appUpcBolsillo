@@ -47,7 +47,7 @@ import 'package:geolocator_android/geolocator_android.dart';
 import 'package:geolocator_apple/geolocator_apple.dart';
 
 import 'mapaUpc/includes/claseInstructionStep.dart';
-
+import 'dart:typed_data';
 
 part 'splash/splash_controller.dart';
 part 'menu/menu_principal_controller.dart';

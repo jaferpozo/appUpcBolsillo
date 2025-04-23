@@ -62,12 +62,11 @@ class _ContadorTextAreaState extends State<ContadorTextArea> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(_isFocused ? 20 : 15),
         boxShadow: _isFocused
-            ? [BoxShadow(color: Colors.blue.shade100, blurRadius: 10)]
+            ? [BoxShadow(color: Colors.transparent, blurRadius: 10)]
             : [],
       ),
       child: Column(
@@ -104,7 +103,7 @@ class _ContadorTextAreaState extends State<ContadorTextArea> {
                   fontSize: 12,
                   color: _caracteresUsados > widget.maxLength
                       ? Colors.red
-                      : Colors.grey.shade700,
+                      : Colors.black,
                 ),
               ),
             ),

@@ -8,7 +8,7 @@ class ServiciosApiImpl extends ServiciosRepository {
     try {
       return  await _serviciosApiProviderImpl.buscaListaServicios(id);
     }  catch (e){
-      throw ExceptionHelper.captureError(e);
+      throw ExceptionHelper.captureError('No tiene Acceso a Internet');
     }
   }
 

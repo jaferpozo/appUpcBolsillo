@@ -25,6 +25,7 @@ class ServiciosPage extends GetView<ServiciosController> {
                 Column(
                   children: [
                     getCabecera(responsive),
+                    SizedBox(height: responsive.altoP(2),),
                     SizedBox(
                       width: responsive.anchoP(88),
                       height: responsive.altoP(68),
@@ -41,34 +42,33 @@ class ServiciosPage extends GetView<ServiciosController> {
     );
   }
 
-  warningWidgetGetX() {
+  Widget warningWidgetGetX() {
     controller.connectionStatusController();
     return Obx(() {
-      return Visibility(
-        visible: controller.status.value != ConnectionStatus.online,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              height: 40,
-              color: Colors.red,
-              child: const Row(
-                children: [
-                  Icon(Icons.wifi_off),
-                  SizedBox(width: 10),
-                  Text(
-                    'No tiene Conexión a Internet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+      final online = controller.status.value == ConnectionStatus.online;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        height: online ? 0 : 40,
+        child: online
+            ? const SizedBox.shrink()
+            : Container(
+          width: double.infinity,
+          color: Colors.redAccent,
+          alignment: Alignment.center,
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.wifi_off, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                'Sin conexión a Internet',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-          ],
+            ],
+          ),
         ),
       );
     });
@@ -138,47 +138,79 @@ class ServiciosPage extends GetView<ServiciosController> {
     return listaU;
   }
 
-  getCabecera(ResponsiveUtil responsive) {
-    return Column(
-      children: [
-        Container(
-          color: Colors.transparent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child:   ImagenBase64Widget(
+  Widget getCabecera(ResponsiveUtil responsive) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [ Colors.grey,Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Avatar circular
+            CircleAvatar(
+              radius: responsive.altoP(4.5),
+              backgroundColor: Colors.grey[200],
+              child: ClipOval(
+                child: ImagenBase64Widget(
                   base64String: controller.imagenModulo,
-                  height: responsive.altoP(12),
-                  isCircular: true, // Para redondear como avatar
-                )
-              ),
-              Container(
-                color: Colors.blue[900],
-                child: Column(
-                  children: <Widget>[
-                    const Divider(color: Colors.transparent, height: 5.0),
-                    const Divider(color: Colors.transparent, height: 3.0),
-                    Container(
-                      color: Colors.white,
-                      child: Text(
-                        '   ${controller.fecha}    ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                          color: AppConfig.colorBarras,
-                        ),
-                      ),
-                    ),
-                    const Divider(color: Colors.transparent, height: 3.0),
-                  ],
+                  height: responsive.altoP(9),
+                  isCircular: false,
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 16),
+            // Texto de fecha
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Fecha del evento:',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      controller.fecha,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.blue[900],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -253,6 +285,7 @@ class ServiciosPage extends GetView<ServiciosController> {
                   ),
                 ),
               ),
+              SizedBox(height: 15),
               getListaItemsServicios(),
             ],
           ),

@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import '../../data/models/items.dart';
 import '../../data/models/itemsOffLine.dart';

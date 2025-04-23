@@ -99,9 +99,18 @@ class DialogosAwesome {
       context: Get.context!,
       animType: AnimType.topSlide,
       dialogType: DialogType.success,
-      title: title,
-      headerAnimationLoop: false,
+      titleTextStyle: TextStyle(
+        fontSize: 18,                  // más pequeño
+        fontWeight: FontWeight.bold,
+        color: Colors.green.shade700,  // color personalizado
+      ),
       desc: descripcion,
+      descTextStyle: TextStyle(
+        fontSize: 15,
+        color: Colors.black87,
+      ),
+      headerAnimationLoop: false,
+
       btnOkText: "Ok",
       btnOkIcon: Icons.check_circle,
       btnOkOnPress: btnOkOnPress ?? () {

@@ -9,7 +9,7 @@ class ServiciosApiProviderImpl extends ServiciosRepository {
       List<Servicio> data= serviciosMiupcFromJson(json).upcServicio.servicios;
       return data;
     } catch (e) {
-      throw ExceptionHelper.captureError(e);
+     throw ExceptionHelper.captureError(e);
     }
   }
 

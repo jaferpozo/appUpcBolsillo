@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -52,11 +53,11 @@ part 'botones2Widget.dart';
 part 'customMap.dart';
 part 'markerWidget.dart';
 part 'imagenBase64Widget.dart';
-part 'combos/combo_busqueda.dart';
 part 'combos/combo_con_busqueda.dart';
 part 'contadorTextArea.dart';
 part 'botonSeleccionarFoto.dart';
 part 'bouncingMarker.dart';
 part 'imgBanner.dart';
-
+part 'moduleCard.dart';
+part 'combos/combo_busqueda.dart';
 

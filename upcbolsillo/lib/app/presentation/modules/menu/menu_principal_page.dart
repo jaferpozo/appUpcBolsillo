@@ -9,227 +9,211 @@ class MenuPrincipalPage extends GetView<MenuPrincipalController> {
       btnAtras: false,
       pantallaIrAtras: () => Get.back(),
       peticionServer: controller.peticionServerState,
-      contenido: Obx(
-        () =>
-            controller.status.value == ConnectionStatus.online
-                ? getContenido()
-                : getContenido(),
-      ),
+      contenido:
+          controller.status.value == ConnectionStatus.online
+              ? getContenido()
+              : getContenido(),
     );
   }
-  warningWidgetGetX() {
+
+  Widget warningWidgetGetX() {
     controller.connectionStatusController();
     return Obx(() {
-      return Visibility(
-          visible: controller.status.value != ConnectionStatus.online,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                height: 40,
-                color: Colors.red,
-                child: const Row(
-                  children: [
-                    Icon(Icons.wifi_off),
-                    SizedBox(width: 5),
-                    Text(
-                      'No tiene Conexión a Internet',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ));
-    });
-  }
-  getContenido() {
-    final responsive = ResponsiveUtil();
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AppImages.imgFondo),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Column(
-          children: [
-            getCabecera(responsive),
-            SizedBox(
-              width: responsive.anchoP(88),
-              height: responsive.altoP(65),
-              child: Obx(() => getListaDatosModulos()),
-            ),
-          ],
-        ),
-        warningWidgetGetX(),
-      ],
-    );
-  }
-
-
-  getListaDatosModulos() {
-    final responsive = ResponsiveUtil();
-    Widget listaU = ListView.builder(
-      shrinkWrap: true,
-      itemCount:
-          controller.listaModulo != null ? controller.listaModulo.length : 0,
-      itemBuilder: (context, ind) {
-        return Obx(
-          () => InkWell(
-            onTap: () => {
-              muestraPantalla(ind, context)
-            },
-            child: Column(
-              children: [
-                SizedBox(
-                  width: responsive.anchoP(90),
-                  child: Column(
+      final online = controller.status.value == ConnectionStatus.online;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        height: online ? 0 : 40,
+        child:
+            online
+                ? const SizedBox.shrink()
+                : Container(
+                  width: double.infinity,
+                  color: Colors.redAccent,
+                  alignment: Alignment.center,
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(width: responsive.anchoP(2.0)),
-                          imgPerfilRedonda(
-                            size: 22,
-                            img:
-                                controller.listaModulo[ind].imgBase64 == ''
-                                    ? null
-                                    : controller.listaModulo[ind].imgBase64,
-                          ),
-                          SizedBox(width: responsive.anchoP(6)),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: responsive.anchoP(50),
-                                child: Text(
-                                  textAlign: TextAlign.justify,
-                                  controller.listaModulo[ind].tituloModulo
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: responsive.diagonalP(1.7),
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.blue[900],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      Icon(Icons.wifi_off, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        'Sin conexión a Internet',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      Divider(color: AppConfig.colorBarras),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    return listaU;
+      );
+    });
   }
 
-  getCabecera(ResponsiveUtil responsive) {
-    return Column(
+  Widget getContenido() {
+    final responsive = ResponsiveUtil();
+    return Stack(
       children: [
-        Container(
-          color: Colors.transparent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Container(
-                  child: Image.asset(AppImages.imgCabecera_menu_principal),
-                  width: responsive.altoP(40),
-                ),
-              ),
-              Container(
-                color: Colors.blue[900],
-                child: Column(
-                  children: <Widget>[
-                    const Divider(color: Colors.transparent, height: 5.0),
-                    Obx(
-                      () =>
-                          controller.userPref != ''
-                              ? Text(
-                                'BIENVENID@ ${controller.userPref.value}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.diagonalP(1.3),
-                                  color: Colors.white,
-                                ),
-                              )
-                              : Text(
-                                'BIENVENID@ ',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.diagonalP(1.5),
-                                  color: Colors.white,
-                                ),
-                              ),
-                    ),
-                    const Divider(color: Colors.transparent, height: 3.0),
-                    Container(
-                      color: Colors.white,
-                      child: Text(
-                        'Hoy es ${UtilidadesUtil.getFechaActual}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                          color: AppConfig.colorBarras,
-                        ),
+        // fondo...
+        Column(
+          children: [
+            SizedBox(height: responsive.altoP(1)),
+            getCabecera(responsive),
+            // la grilla ya está dentro de su propio Obx
+            SizedBox(
+              width: responsive.anchoP(88),
+              height: responsive.altoP(65),
+              child: getListaDatosModulos(), // sin Obx aquí tampoco
+            ),
+          ],
+        ),
+        warningWidgetGetX(), // warningWidgetGetX() utiliza su propio Obx
+      ],
+    );
+  }
+
+  Widget getListaDatosModulos() {
+    final responsive = ResponsiveUtil();
+    return Obx(() {
+      final mods = controller.listaModulo;
+      return GridView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.symmetric(
+          horizontal: responsive.anchoP(4),
+          vertical: responsive.altoP(8),
+        ),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: responsive.anchoP(4),
+          mainAxisSpacing: responsive.altoP(3),
+          childAspectRatio: 0.9,
+        ),
+        itemCount: mods.length,
+        itemBuilder: (context, i) {
+          final m = mods[i];
+          return ModuleCard(
+            title: m.tituloModulo,
+            base64Img: m.imgBase64.isEmpty ? null : m.imgBase64,
+            onTap: () => muestraPantalla(i, context),
+          );
+        },
+      );
+    });
+  }
+
+  Widget getCabecera(ResponsiveUtil responsive) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey, Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Avatar circular
+            Obx(() {
+              final bytes = controller.fotoPerfilBytes.value;
+              return CircleAvatar(
+                radius: responsive.altoP(4.5),
+                backgroundColor: Colors.grey[200],
+                backgroundImage: bytes != null ? MemoryImage(bytes) : null,
+                child: bytes == null
+                    ? Icon(
+                  Icons.person,
+                  size: responsive.altoP(4.5),
+                  color: Colors.grey,
+                )
+                    : null,
+              );
+            }),
+
+            const SizedBox(width: 16),
+            // Texto de fecha
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(
+                    () => Text(
+                      controller.userPref.value.isNotEmpty
+                          ? 'BIENVENID@ ${controller.userPref.value}'
+                          : 'BIENVENID@',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: responsive.diagonalP(1.6),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
-                    const Divider(color: Colors.transparent, height: 3.0),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 4),
+                  Center(
+                    child: Text(
+                      'Hoy es ${UtilidadesUtil.getFechaActual}',
+                      style: TextStyle(
+                        fontSize: responsive.diagonalP(1.3),
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF06245B),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   muestraPantalla(index, BuildContext ctx) async {
     if (index == 0) {
-     if( controller.status==ConnectionStatus.online){
-       controller.verificarGps();
-     }else{
-       DialogosAwesome.getError(descripcion: "No tiene Conexión a Internet");
-     }
+      if (controller.status == ConnectionStatus.online) {
+        controller.verificarGps();
+      } else {
+        DialogosAwesome.getError(descripcion: "No tiene Conexión a Internet");
+      }
     }
     if (index == 1) {
-      if( controller.status==ConnectionStatus.online){
+      if (controller.status == ConnectionStatus.online) {
         Map<String, String> data = {
           "id": "1",
-          "imagen":controller.listaModulo[1].imgBase64
+          "imagen": controller.listaModulo[1].imgBase64,
         };
-        Get.toNamed(AppRoutes.REGISTRAR_EVENTO, parameters: data );
-      }else{
-        DialogosAwesome.getError(descripcion: "No tiene Conexión a Internet para registrar un evento");
+        Get.toNamed(AppRoutes.REGISTRAR_EVENTO, parameters: data);
+      } else {
+        DialogosAwesome.getError(
+          descripcion: "No tiene Conexión a Internet para registrar un evento",
+        );
       }
     }
     if (index == 2) {
       Map<String, String> data = {
-        "id": "2",
-        "imagen":controller.listaModulo[2].imgBase64
+        "id": "1",
+        "imagen": controller.listaModulo[2].imgBase64,
       };
-     Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
+      Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
     }
-
+    if (index == 3) {
+      Map<String, String> data = {
+        "id": "2",
+        "imagen": controller.listaModulo[3].imgBase64,
+      };
+      Get.toNamed(AppRoutes.SERVICIOS, parameters: data);
+    }
   }
-
 }

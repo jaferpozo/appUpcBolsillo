@@ -5,6 +5,7 @@ class RegistroUsuarioController extends GetxController {
       Get.find<RegistroUsuarioApiImpl>();
   final GpsController gpsController = Get.find<GpsController>();
   final LocalStoreImpl _LocalStoreImpl = Get.find<LocalStoreImpl>();
+  Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);
   RxBool cedulaLista = false.obs;
   String imeiCell = '';
   bool cargarDatos = true;
@@ -27,7 +28,7 @@ class RegistroUsuarioController extends GetxController {
   String latitud = '';
   String longitud = '';
   String estadoConex = 'N';
-  String validaMail='N';
+  String validaMail = 'N';
   Geolocator geolocator = Geolocator();
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -54,6 +55,7 @@ class RegistroUsuarioController extends GetxController {
   final formKeyExtra = GlobalKey<FormState>();
   double latitudMiUbicacion = 0.0, longitudMiUbicacion = 0.0;
   DeviceInfo? deviceInfo;
+  Rx<Uint8List?> fotoPerfilBytes = Rx<Uint8List?>(null);
 
   @override
   void onInit() {
@@ -78,7 +80,7 @@ class RegistroUsuarioController extends GetxController {
   Future<void> getImei() async {
     String platformImei;
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid){
+    if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       try {
         platformImei = await androidInfo.id;
@@ -87,27 +89,25 @@ class RegistroUsuarioController extends GetxController {
       }
       imeiCell = platformImei;
     }
-      if (Platform.isIOS){
-        IosDeviceInfo iosDeviceInfo=await deviceInfo.iosInfo;
-        try {
-          platformImei = await iosDeviceInfo.systemName;
-        } on Exception catch (_) {
-          platformImei = 'Failed to get platform version.';
-        }
-        imeiCell = platformImei;
+    if (Platform.isIOS) {
+      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      try {
+        platformImei = await iosDeviceInfo.systemName;
+      } on Exception catch (_) {
+        platformImei = 'Failed to get platform version.';
       }
-
-
+      imeiCell = platformImei;
+    }
   }
+
   String? emailValidator(String value) {
     if (!value.contains('@')) {
-      validaMail="N";
-    }else
-      {
-        validaMail="S";
-      }
-
+      validaMail = "N";
+    } else {
+      validaMail = "S";
+    }
   }
+
   Future<void> getTelephonyInfo() async {
     tConexion = "none";
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -161,12 +161,13 @@ class RegistroUsuarioController extends GetxController {
       peticionServerState(true);
       if (controllerCorreo.text == '') {
         DialogosAwesome.getError(
-            descripcion: 'Verifique que todos los campos tengan datos');
+          descripcion: 'Verifique que todos los campos tengan datos',
+        );
         peticionServerState(false);
         return;
       }
       emailValidator(controllerCorreo.text);
-      if (validaMail== "N") {
+      if (validaMail == "N") {
         DialogosAwesome.getError(descripcion: 'mail no valido');
         return;
       }
@@ -176,43 +177,54 @@ class RegistroUsuarioController extends GetxController {
           (controllerContacto.text == '') ||
           (controllerCorreo.text == '')) {
         DialogosAwesome.getError(
-            descripcion: 'Verifique que todos los campos tengan datos');
+          descripcion: 'Verifique que todos los campos tengan datos',
+        );
         peticionServerState(false);
         return;
       } else {
         String mensaje = await _apiRegistroUsuarioRepository.insertarUsuario(
-            tipoUsuario: tipoUsuario,
-            latitud: AppConfig.ubicacion.value.latitude,
-            longitud: AppConfig.ubicacion.value.longitude,
-            mail: controllerCorreo.text,
-            fechaRegistro: MyDate.getFechaActual,
-            tipoConexion: tConexion,
-            ssIDConexion: SSID,
-            numCelular: controllerContacto.text,
-            versionAndroid: imeiCell,
-            modeloCelular: modeloCelular,
-            cedula: controllerCedula.text,
-            ip: ip,
-            primerApellido: controllerApellido1.text,
-            primerNombre: controllerPrimerNombre.text,
-            segundoApellido: controllerApellido2.text);
+          tipoUsuario: tipoUsuario,
+          latitud: AppConfig.ubicacion.value.latitude,
+          longitud: AppConfig.ubicacion.value.longitude,
+          mail: controllerCorreo.text,
+          fechaRegistro: MyDate.getFechaActual,
+          tipoConexion: tConexion,
+          ssIDConexion: SSID,
+          numCelular: controllerContacto.text,
+          versionAndroid: imeiCell,
+          modeloCelular: modeloCelular,
+          cedula: controllerCedula.text,
+          ip: ip,
+          primerApellido: controllerApellido1.text,
+          primerNombre: controllerPrimerNombre.text,
+          segundoApellido: controllerApellido2.text,
+        );
         final splitted = mensaje.split('|');
         if (splitted[0] == 'true') {
           _LocalStoreImpl.setDatosUsuario(splitted[1]);
           _LocalStoreImpl.setDatosMail(controllerCorreo.text);
+          // 1️⃣ Lee los bytes del archivo temporal
+          final bytes = await mGaleryCameraModel.value?.imageFile.readAsBytes();
+          // 2️⃣ Guarda en SharedPreferences (Base64)
+          await _LocalStoreImpl.setFoto(bytes!);
+          // 3️⃣ Actualiza el observable para UI
+          fotoPerfilBytes.value = bytes;
+
           DialogosAwesome.getSucess(
-              descripcion: "Se ha registrado existosamente su usuario.",
-              title: 'Mi Upc',
-              btnOkOnPress: () {
-                Get.offAllNamed(AppRoutes.MENU);
-              });
+            descripcion: "Se ha registrado existosamente su usuario.",
+            title: 'Mi Upc',
+            btnOkOnPress: () {
+              Get.offAllNamed(AppRoutes.MENU);
+            },
+          );
         } else {
           DialogosAwesome.getError(
-              descripcion: mensaje,
-              title: 'Mi Upc',
-              btnOkOnPress: () {
-                // Get.back();
-              });
+            descripcion: mensaje,
+            title: 'Mi Upc',
+            btnOkOnPress: () {
+              // Get.back();
+            },
+          );
           peticionServerState(false);
         }
 

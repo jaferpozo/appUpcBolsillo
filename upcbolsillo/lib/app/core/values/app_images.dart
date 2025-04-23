@@ -15,6 +15,7 @@ class AppImages{
   static const imgNoWifi = _rutaImg + "nowifi.png";
   static const imgSiWifi = _rutaImg + "siwifi.png";
   static const imgLinea = _rutaImg+ "linea.png";
+  static const imgFondo1 = _rutaImg+ "fondo1.png";
 
   static const img1800 = _rutaImg+ "1800.png";
   static const imgCabecera = _rutaImg+ "cabecera.png";

@@ -8,7 +8,7 @@ class ItemsApiImpl extends ItemsRepository {
     try {
       return  await _itemsApiProviderImpl.buscaDatosItem(id);
     }  catch (e){
-      throw ExceptionHelper.captureError(e);
+      throw ExceptionHelper.captureError('No tiene Acceso a Internet');
     }
   }
 

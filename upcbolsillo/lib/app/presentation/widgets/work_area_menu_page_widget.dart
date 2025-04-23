@@ -39,6 +39,7 @@ class WorkAreaMenuPageWidget extends StatefulWidget {
 
 class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
   GpsController gpsController = Get.find<GpsController>();
+  Rx<Uint8List?> fotoPerfilBytes = Rx<Uint8List?>(null);
   String ver = '';
   String userPref = '';
   String mailPref = '';
@@ -50,6 +51,7 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
     // TODO: implement initState
     _verificaDatos();
     _loadVersion();
+    _cargarFotoPerfil();
   }
 
   _loadVersion() async {
@@ -77,8 +79,8 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
       height: responsive.alto,
       width: responsive.ancho,
       child: Image.asset(
-        widget.imgFondo ?? AppImages.imgarea,
-        fit: BoxFit.fill,
+        widget.imgFondo ?? AppImages.imgFondo1,
+        fit: BoxFit.cover,
       ),
     ),);
 
@@ -96,7 +98,6 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
                 wgImgFondo,
                 Column(
                   children: [
-
                     widget.title == '' ? Container() : Text(
                       widget.title,
                       textAlign:
@@ -162,76 +163,151 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
 
   Widget bannerInferior(ResponsiveUtil responsive) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF001F54), Color(0xFF003580)],
+          colors: [   Colors.grey,Color(0xFF06245B),],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        color: Color(0xFF0A2A66), // mismo tono que AppBar o complementario
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
+            color: Colors.black45,
+            blurRadius: 8,
             offset: Offset(0, -2),
           ),
         ],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(22),
+          topRight: Radius.circular(22),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgFacebook,
             onTap: launchURLFace,
-            ruta: AppImages.imgFacebook,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgTwitter,
             onTap: launchURLTwitter,
-            ruta: AppImages.imgTwitter,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgInstagran,
             onTap: launchURLInsta,
-            ruta: AppImages.imgInstagran,
-            responsive: responsive,
           ),
-          imgBanner(
+          socialIconButton(
+            iconPath: AppImages.imgYoutube,
             onTap: launchURLYou,
-            ruta: AppImages.imgYoutube,
-            responsive: responsive,
           ),
         ],
       ),
     );
   }
 
-  getAppBar() {
-    return AppBar(
-      backgroundColor: Colors.blue[900],
-      title: const Text(
-        textAlign: TextAlign.justify,
-        "MI UPC",
-        style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.white),
-      ),
-      leading: Builder(
-        builder: (BuildContext context) {
-          return IconButton(
-            icon: const Icon(Icons.menu),
-            color: Colors.white,
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            tooltip: MaterialLocalizations
-                .of(context)
-                .openAppDrawerTooltip,
-          );
-        },
+  Widget socialIconButton({
+    required String iconPath,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white30, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Image.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+
+        ),
       ),
     );
   }
+
+
+  AppBar getAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [  Color(0xFF06245B), Colors.grey.shade600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+      ),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            AppImages.imgEdificio,
+            height: 32,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'MI UPC',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      leading: Builder(
+        builder: (context) {
+          return IconButton(
+            icon: const Icon(Icons.menu, size: 28),
+            color: Colors.white,
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          );
+        },
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_none, size: 26),
+          color: Colors.white,
+          onPressed: () {
+            // Acción notificaciones
+          },
+        ),
+        if (widget.btnAtras && widget.pantallaIrAtras != null)
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios, size: 24),
+            color: Colors.white,
+            onPressed: widget.pantallaIrAtras,
+          ),
+      ],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
+    );
+  }
+
 
   // Drawer
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
@@ -239,110 +315,151 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
   final Color active = Colors.grey.shade800;
   final Color divider = Colors.grey.shade600;
 
-  _buildDrawer(BuildContext context) {
-    const String image = AppImages.imgEscpolicia;
-    return ClipPath(
+  Widget _buildDrawer(BuildContext context) {
+    final responsive = ResponsiveUtil();
+
+    return ClipRRect(
+      borderRadius: const BorderRadius.horizontal(right: Radius.circular(30)),
       child: Drawer(
-        child: Container(
-          padding: const EdgeInsets.only(left: 16.0, right: 40),
-          decoration: BoxDecoration(
-              color: primary,
-              boxShadow: const [BoxShadow(color: Colors.black45)]),
-          width: 300,
-          child: SafeArea(
-
-            /// ---------------------------
-            /// Building scrolling  content for drawer .
-            /// ---------------------------
-
-            child: SingleChildScrollView(
+        backgroundColor: Colors.transparent,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.15),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: SafeArea(
               child: Column(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.centerRight,
+                children: [
+                  // CERRAR SESIÓN
+                  Align(
+                    alignment: Alignment.topRight,
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.power_settings_new,
-                        color: Colors.red,
-                      ),
-                      onPressed: () {
-                       // _localStoreImpl.setDatosMail('');
-                        //_localStoreImpl.setDatosUsuario('');
-                        //_localStoreImpl.setDatosAcuerdo('No Aceptado');
-                        Get.back();
-                        exit(0);
-                      },
+                      icon: const Icon(Icons.power_settings_new, color: Colors.redAccent),
+                      onPressed: () => exit(0),
                     ),
                   ),
 
-                  /// ---------------------------
-                  /// Building header for drawer .
-                  /// ---------------------------
-                  Container(
-                    height: 180,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                            colors: [Colors.black54, Colors.blueAccent])),
-                    child: const CircleAvatar(
-                      radius: 80,
-                      backgroundImage: AssetImage(image),
+                  // AVATAR & DATOS
+                  Obx(() {
+                    final bytes = fotoPerfilBytes.value;
+                    return Column(
+                      children: [
+                        CircleAvatar(
+                          radius: responsive.altoP(10),
+                          backgroundColor: Colors.grey[200],
+                          backgroundImage:
+                          bytes != null ? MemoryImage(bytes) : null,
+                          child: bytes == null
+                              ? Icon(Icons.person, size: responsive.altoP(8), color: Colors.grey)
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          userPref.isNotEmpty ? userPref : "Usuario",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: responsive.diagonalP(1.6),
+                          ),
+                        ),
+                        Text(
+                          mailPref.isNotEmpty ? mailPref : "email@dominio.com",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: responsive.diagonalP(1.2),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    );
+                  }),
+
+                  // OPCIONES DE NAVEGACIÓN
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        _drawerItem(Icons.home, "Inicio", () {
+                          Get.offAllNamed(AppRoutes.SPLASH);
+                        }),
+                        _drawerItem(Icons.share, "Compartir App", () {
+                          Share.share("https://play.google.com/store/...");
+                        }),
+                        _drawerItem(Icons.person,
+                            userPref.isEmpty ? "Registrar Usuario" : "Cambiar Datos",
+                            verificaTConexion
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 5.0),
 
-                  /// ---------------------------
-                  /// Building header title for drawer .
-                  /// ---------------------------
-
-                  Text(
-                    userPref != '' ? userPref : "Policia Nacional del Ecuador",
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w600),
+                  // SOCIAL + VERSIÓN
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        socialIconButtonD(AppImages.imgFacebook, launchURLFace),
+                        socialIconButtonD(AppImages.imgTwitter, launchURLTwitter),
+                        socialIconButtonD(AppImages.imgInstagran, launchURLInsta),
+                        socialIconButtonD(AppImages.imgYoutube, launchURLYou),
+                      ],
+                    ),
                   ),
                   Text(
-                    mailPref != '' ? mailPref : "www.policia.gob.ec",
-
-                    style: TextStyle(color: active, fontSize: 12.0),
+                    'v$ver ${AppConfig.ambiente}',
+                    style: TextStyle(color: Colors.white54, fontSize: 12),
                   ),
-
-                  const SizedBox(height: 30.0),
-                  _buildRow(Icons.home, "Inicio", onTap: () {
-                    //oculta el drawer
-                    _key.currentState?.openEndDrawer();
-                    Get.offAllNamed(AppRoutes.SPLASH);
-                  }),
-                  _buildDivider(),
-                  _buildRow(
-                      Icons.share, "Compartir Aplicación",
-                      showBadge: true, numNotificaciones: 0, onTap: () {
-                    //oculta el drawer
-                    Share.share(
-                        "https://play.google.com/store/apps/details?id=mmeo.system.pne&hl=es");
-                    _key.currentState?.openEndDrawer();
-                  }),
-                  _buildDivider(),
-                    _buildRow(Icons.person_pin, "Perfil", onTap: () {
-                 verificaTConexion();
-
-
-                    }),
-
-
-                  _buildDivider(),
-                  Text(
-                    'Versión: ' + ver + ' ' + AppConfig.ambiente,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+  Widget socialIconButtonD(String assetPath, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15),
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(assetPath),
+      ),
+    );
+  }
+  Widget _drawerItem(IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      hoverColor: Colors.white24,
     );
   }
   verificarGps() async {
@@ -355,12 +472,13 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
         DialogosAwesome.getInformation(
             descripcion: "Las coordenas aun no estan lista vuelva a intentar");
       }else{
-        if (acuerdoPref=="Aceptado"){
+      /*  if (acuerdoPref=="Aceptado"){
 
           Get.toNamed(AppRoutes.REGISTROUSUARIO);
         }else{
           Get.toNamed(AppRoutes.ACUERDO);
-        }
+        }*/
+        Get.toNamed(AppRoutes.REGISTROUSUARIO);
       }
     }
   }
@@ -378,19 +496,11 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
     DialogosAwesome.getError(descripcion: 'No tiene conexión a Internet');
     }
   }
-  /// ---------------------------
-  /// Building divider for drawer .
-  /// ---------------------------
-
   Divider _buildDivider() {
     return Divider(
       color: divider,
     );
   }
-
-  /// ---------------------------
-  /// Building item  for drawer .
-  /// ---------------------------
 
   Widget _buildRow(IconData icon, String title,
       {bool showBadge = false,
@@ -413,7 +523,6 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
               style: tStyle,
             ),
             Spacer(),
-            // se dibuja las notificaciones
             if (showBadge && numNotificaciones > 0)
               Material(
                 color: Colors.deepOrange,
@@ -468,6 +577,12 @@ class _WorkAreaMenuPageWidgetState extends State<WorkAreaMenuPageWidget> {
     final url = Uri.parse('https://www.youtube.com/user/policiaecuador2');
     if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
       throw Exception('Could not launch $url');
+    }
+  }
+  Future<void> _cargarFotoPerfil() async {
+    final bytes = await _localStoreImpl.getFoto();
+    if (bytes != null) {
+      fotoPerfilBytes.value = bytes;
     }
   }
 }

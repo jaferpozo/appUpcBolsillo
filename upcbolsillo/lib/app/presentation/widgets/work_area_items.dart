@@ -91,48 +91,7 @@ class _WorkAreaItemsPageWidgetState extends State<WorkAreaItemsPageWidget> {
       width: responsive.ancho,
       child: Image.asset(
         widget.imgFondo ?? AppImages.imgarea,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  AppBar getAppBar(String titleAppBar) {
-    return AppBar(
-      backgroundColor: Colors.blue[900],
-      title: Text(
-        titleAppBar,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
-      centerTitle: true,
-      leading: Builder(
-        builder: (BuildContext context) {
-          return Container(
-            margin: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              color: Colors.white,
-              iconSize: 30,
-              onPressed: () => Get.back(),
-              tooltip: 'Atrás',
-            ),
-          );
-        },
+        fit: BoxFit.none,
       ),
     );
   }
@@ -157,32 +116,135 @@ class _WorkAreaItemsPageWidgetState extends State<WorkAreaItemsPageWidget> {
       ),
     );
   }
+  AppBar getAppBar(String titleAppBar) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [  Color(0xFF06245B), Colors.grey.shade600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+      ),
+      title: Text(
+        titleAppBar,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
+      ),
+      leading: Builder(
+        builder: (BuildContext context) {
+          return Container(
+            margin: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.transparent,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child:IconButton(
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 30,
+              color: Colors.white,
+              tooltip: 'Atrás',
+              onPressed: () => Get.back(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
 
   Widget bannerInferior(ResponsiveUtil responsive) {
     return Container(
-      height: responsive.altoP(5),
-      color: Colors.blue[900],
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          imgBanner(
-              onTap: launchURLFace,
-              ruta: AppImages.imgFacebook,
-              responsive: responsive),
-          imgBanner(
-              onTap: launchURLTwitter,
-              ruta: AppImages.imgTwitter,
-              responsive: responsive),
-          imgBanner(
-              onTap: launchURLInsta,
-              ruta: AppImages.imgInstagran,
-              responsive: responsive),
-          imgBanner(
-              onTap: launchURLYou,
-              ruta: AppImages.imgYoutube,
-              responsive: responsive),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [   Colors.grey,Color(0xFF06245B),],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        color: Color(0xFF0A2A66), // mismo tono que AppBar o complementario
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black45,
+            blurRadius: 8,
+            offset: Offset(0, -2),
+          ),
         ],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(22),
+          topRight: Radius.circular(22),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          socialIconButton(
+            iconPath: AppImages.imgFacebook,
+            onTap: launchURLFace,
+          ),
+          socialIconButton(
+            iconPath: AppImages.imgTwitter,
+            onTap: launchURLTwitter,
+          ),
+          socialIconButton(
+            iconPath: AppImages.imgInstagran,
+            onTap: launchURLInsta,
+          ),
+          socialIconButton(
+            iconPath: AppImages.imgYoutube,
+            onTap: launchURLYou,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget socialIconButton({
+    required String iconPath,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white30, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Image.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+
+        ),
       ),
     );
   }

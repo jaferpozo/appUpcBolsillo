@@ -71,10 +71,11 @@ class _ComboBusquedaState<T> extends State<ComboBusqueda<T>> with SingleTickerPr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Text(
-              "Delito",
+              widget.title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: responsive.diagonalP(1.9),
@@ -163,7 +164,7 @@ class _ComboBusquedaState<T> extends State<ComboBusqueda<T>> with SingleTickerPr
 
     Widget msjSelectDato = Text(
       widget.textSeleccioneUndato ?? "Seleccione un dato",
-      style: TextStyle(color: Colors.red, fontSize: responsive.diagonalP(1.5)),
+      style: TextStyle(color: AppColors.colorBordecajas, fontSize: responsive.diagonalP(1.6)),
     );
 
     if (item == null) {
@@ -201,86 +202,160 @@ class _ComboBusquedaState<T> extends State<ComboBusqueda<T>> with SingleTickerPr
   }
 
   Widget _customDesingDataPopop(
-      BuildContext context, T? item, bool v, bool isSelected) {
-    final responsive = ResponsiveUtil();
-
-    Widget msjSelectDato = ListTile(
-      contentPadding: EdgeInsets.all(0),
-      title: Text(
-        widget.textSeleccioneUndato ?? "Seleccione un dato",
-        style: TextStyle(color: Colors.red, fontSize: responsive.diagonalP(1)),
-      ),
-    );
-
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.blue,
-      ),
-      child: (item == null)
-          ? msjSelectDato
-          : widget.displayField!(item).isEmpty
-          ? msjSelectDato
-          : getDesing(
-          colorTexto: isSelected ? Colors.white : Colors.black,
-          titulo: widget.displayField!(item),
-          icon: widget.icon,
-          iconUrl: widget.imgUrl,
-          isSelect: isSelected),
-    );
-  }
-
-  Widget getOnlyDesing(
-      {required Widget icon,
-        String titulo = '',
-        Color colorTexto = Colors.black}) {
-    final responsive = ResponsiveUtil();
-    return Column(
-      children: [
-        Row(
-          children: [
-            icon,
-            Flexible(
-              child: Text(
-                titulo,
-                style: TextStyle(
-                  fontSize: responsive.diagonalP(1.2),
-                  color: colorTexto,
-                ),
-              ),
-            ),
-          ],
+      BuildContext context,
+      T? item,
+      bool _,          // parámetro no usado
+      bool isSelected) {
+    final resp = ResponsiveUtil();
+    if (item == null || widget.displayField!(item).isEmpty) {
+      return ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          widget.textSeleccioneUndato ?? 'Seleccione un dato',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: resp.diagonalP(1.2),
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        SizedBox(height: 4),
-        Container(height: 1, color: Colors.black38),
-      ],
+      );
+    }
+
+    // Item normal con animación y feedback visual
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected
+            ?  AppColors.colorBordecajas
+            : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isSelected
+              ?   Colors.black
+              : AppColors.colorBordecajas,
+          width: isSelected ? 2 : 1,
+        ),
+        boxShadow: isSelected
+            ? [
+          BoxShadow(
+            color: AppColors.colorBordecajas,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          )
+        ]
+            : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          )
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          splashColor: Theme.of(context).primaryColor.withOpacity(0.3),
+          onTap: () {
+
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: resp.anchoP(2),
+              vertical: resp.altoP(1),
+            ),
+            child: Row(
+              children: [
+                // Icono de check o genérico
+                Container(
+                  padding: EdgeInsets.all(resp.anchoP(0.8)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? Colors.white
+                        : Colors.grey.shade300,
+                  ),
+                  child: Icon(
+                    isSelected ? Icons.check : (widget.icon ?? Icons.description),
+                    size: resp.diagonalP(2),
+                    color: isSelected ? Colors.black : AppColors.colorBordecajas,
+                  ),
+                ),
+                SizedBox(width: resp.anchoP(2)),
+                // Texto del ítem
+                Expanded(
+                  child: Text(
+                    widget.displayField!(item),
+                    style: TextStyle(
+                      fontSize: resp.diagonalP(1.6),
+                      fontWeight:
+                      isSelected ? FontWeight.bold : FontWeight.w400,
+                      color: isSelected
+                          ? Colors.white
+                          : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
-  Widget getDesing({
-    bool isSelect = false,
-    IconData? icon,
-    String titulo = '',
-    bool selected = false,
-    String? iconUrl,
+  Widget getOnlyDesing({
+    required Widget icon,
+    required String titulo,
     Color colorTexto = Colors.black,
+    bool selected = false,
+    VoidCallback? onTap,
   }) {
-    Widget _icon = getIcon(icon: icon, isSelecc: isSelect);
-    return getOnlyDesing(icon: _icon, titulo: titulo, colorTexto: colorTexto);
+    final responsive = ResponsiveUtil();
+    final bgColor = selected ? Colors.blue.withOpacity(0.1) : Colors.transparent;
+    final textColor = selected ? Colors.blue : colorTexto;
+    final borderColor = selected ? Colors.black87 : Colors.grey.shade300;
+
+    return Material(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: responsive.altoP(1.2),
+            horizontal: responsive.anchoP(3),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  icon,
+                  SizedBox(width: responsive.anchoP(1.5)),
+                  Expanded(
+                    child: Text(
+                      titulo,
+                      style: TextStyle(
+                        fontSize: responsive.diagonalP(1.5),
+                        color: textColor,
+                        fontWeight:
+                        selected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: responsive.altoP(1)),
+              Container(height: 1, color: borderColor),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget getIcon({IconData? icon, bool isSelecc = false}) {
-    Widget wg = icon != null
-        ? Icon(icon, color: AppColors.colorBotones)
-        : Icon(Icons.description, color: AppColors.colorBotones);
-
-    if (isSelecc) {
-      wg = Icon(Icons.check_circle, color: Colors.white);
-    }
-    return Container(padding: EdgeInsets.all(5), child: wg);
-  }
 }

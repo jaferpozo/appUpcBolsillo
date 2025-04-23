@@ -21,6 +21,7 @@ import '../../core/app_config.dart';
 import '../../core/exceptions/exception_helper.dart';
 import '../../core/exceptions/exceptions.dart';
 
+import '../../core/utils/photo_helper.dart';
 import '../../core/utils/prints_msj.dart';
 import '../../domain/repositories/domain_repositories.dart';
 import '../models/items.dart';
@@ -29,7 +30,7 @@ import '../models/models.dart';
 import '../models/modulos.dart';
 import '../models/servicios.dart';
 import '../models/upc.dart';
-
+import 'dart:typed_data';
 
 part 'local/local_store_provider.dart';
 

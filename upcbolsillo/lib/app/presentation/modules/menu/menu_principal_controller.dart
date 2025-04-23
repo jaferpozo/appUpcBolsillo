@@ -6,6 +6,7 @@ class MenuPrincipalController extends GetxController {
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
   final GpsController gpsController = Get.find<GpsController>();
   final ModulosApiImpl _apiModulosRepository = Get.find<ModulosApiImpl>();
+  Rx<Uint8List?> fotoPerfilBytes = Rx<Uint8List?>(null);
   Rx<Modulo> datosModulos = Modulo(
           descripcionModulo: '',
           imgBase64: '',
@@ -31,6 +32,7 @@ class MenuPrincipalController extends GetxController {
   void onInit() {
    verificaTConexion();
     _verificaDatos();
+   _cargarFotoPerfil();
     // TODO: el contolloler se ha creado pero la vista no se ha renderizado
     super.onInit();
   }
@@ -74,7 +76,12 @@ class MenuPrincipalController extends GetxController {
       }
     }
   }
-
+  Future<void> _cargarFotoPerfil() async {
+    final bytes = await _localStoreImpl.getFoto();
+    if (bytes != null) {
+      fotoPerfilBytes.value = bytes;
+    }
+  }
   connectionStatusController() async {
     connectionSubscription = internetChecker
         .internetStatus()
@@ -123,7 +130,6 @@ class MenuPrincipalController extends GetxController {
         return;
       }
       _localStoreImpl.setDatosListaModulos(listModulos: listaModulo.value);
-
       peticionServerState(false);
    } on ServerException catch (e) {
       peticionServerState(false);
