@@ -27,7 +27,11 @@ abstract class LocalStorageRepository{
   Future<void> setFoto(Uint8List imageBytes);
   Future<Uint8List?> getFoto();
 
+  Future<List<Servicio>> getListServiciosPoli();
+  Future<bool> setDatosListaServiciosPoli( {required List<Servicio>  listServiciosPoli});
 
+  Future<List<ItemOffLine>> getListItemsPoli();
+  Future<bool> setDatosListaItemsPoli( {required List<ItemOffLine>  listItemsPoli});
 
 
 }

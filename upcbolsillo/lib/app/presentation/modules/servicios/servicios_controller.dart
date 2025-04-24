@@ -28,10 +28,11 @@ class ServiciosController extends GetxController {
   RxList<String> listaDetalleItemsServicios = <String>[].obs;
 
   var datosServicio = Get.parameters;
-  String imagenModulo="";
+  String imagenModulo = "";
   String fecha = "";
   String estadoConex = "";
   int id = 0;
+
   @override
   void onInit() {
     cargarDatosLista();
@@ -62,11 +63,13 @@ class ServiciosController extends GetxController {
         estadoConex = 'S';
         print('connected');
       } else {
-        listaServicios.value = await _localStoreImpl.getListServicios();
+        if (id==1){ listaServicios.value = await _localStoreImpl.getListServiciosPoli();}
+        if (id==2){listaServicios.value = await _localStoreImpl.getListServicios();}
         listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
       }
     } on SocketException catch (_) {
-      listaServicios.value = await _localStoreImpl.getListServicios();
+      if (id==1){ listaServicios.value = await _localStoreImpl.getListServiciosPoli();}
+      if (id==2){listaServicios.value = await _localStoreImpl.getListServicios();}
       listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
       estadoConex = 'N';
     }
@@ -83,24 +86,32 @@ class ServiciosController extends GetxController {
       listaServicios.value = await _apiServiciosRepository.buscaListaServicios(
         id,
       );
-      print('----------------------*$listaServicios');
       if (listaServicios.isNotEmpty && listaServicios[0].idUpcServicio == 2) {
         detalle = 'COMO ACCEDER A ESTE SERVICIO';
       }
 
-      if (listaServicios.length == 0) {
-        listaServicios.value = await _localStoreImpl.getListServicios();
+      if (listaServicios.isEmpty) {
+        if (id==1){ listaServicios.value = await _localStoreImpl.getListServiciosPoli();}
+        if (id==2){listaServicios.value = await _localStoreImpl.getListServicios();}
         return;
       }
-
-      await _localStoreImpl.setDatosListaServicios(
-        listServicios: listaServicios.value,
-      );
+      if (id == 1) {
+        await _localStoreImpl.setDatosListaServiciosPoli(
+          listServiciosPoli: listaServicios,
+        );
+      }
+      if (id == 2) {
+        await _localStoreImpl.setDatosListaServicios(
+          listServicios: listaServicios,
+        );
+      }
 
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
-      listaServicios.value = await _localStoreImpl.getListServicios();
+      if (id==1){ listaServicios.value = await _localStoreImpl.getListServiciosPoli();}
+      if (id==2){listaServicios.value = await _localStoreImpl.getListServicios();}
+
 
     }
   }
@@ -119,13 +130,13 @@ class ServiciosController extends GetxController {
     }
   }
 
-
   cargarDatosListaItemsOffline() async {
     try {
       listaItemsServiciosTodos.clear();
       peticionServerState(true);
 
-      listaItemsServiciosTodos.value = await _apiItemsRepository.buscaDatosItemsOffline();
+      listaItemsServiciosTodos.value =
+          await _apiItemsRepository.buscaDatosItemsOffline();
       print('TODOS----> ' + listaItemsServiciosTodos.length.toString());
 
       if (listaItemsServiciosTodos.isEmpty) {
@@ -135,15 +146,15 @@ class ServiciosController extends GetxController {
       await _localStoreImpl.setDatosListaItems(
         listItems: listaItemsServiciosTodos.value,
       );
-      print("ERROR---->4--"+listaItemsServiciosTodos.length.toString());
+      print("ERROR---->4--" + listaItemsServiciosTodos.length.toString());
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
-      var list =await _localStoreImpl.getListItems();
-      listaItemsServiciosTodos.value=list;
-
+      var list = await _localStoreImpl.getListItems();
+      listaItemsServiciosTodos.value = list;
     }
   }
+
   cargarDatosDetalleListaOffLine(int id) async {
     try {
       listaItemsServicios.clear();
@@ -153,17 +164,16 @@ class ServiciosController extends GetxController {
       for (var i = 0; i < listaItemsServiciosTodos.length; i++) {
         if (listaItemsServiciosTodos[i].idUpcServicio == id) {
           listaItemsServicios.add(
-              Item(
-                descripcion: listaItemsServiciosTodos[i].descripcion,
-                idUpcServitems: listaItemsServiciosTodos[i].idUpcServitems,
-              )
+            Item(
+              descripcion: listaItemsServiciosTodos[i].descripcion,
+              idUpcServitems: listaItemsServiciosTodos[i].idUpcServitems,
+            ),
           );
         }
       }
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
- 
     }
   }
 }

@@ -9,8 +9,10 @@ const _PREF_ACUERDO = 'ACUERDO';
 const _PREF_ITEMS = 'ITEMS';
 const _PREF_FOTO='FOTO';
 const _PREF_LIST_MODULOS = 'LIST_MODULO';
-const _PREF_LIST_SERVICIOS = 'LIST_SERVICIOS';
 
+const _PREF_LIST_SERVICIOS = 'LIST_SERVICIOS';
+const _PREF_LIST_SERVICIOSPOLI = 'LIST_SERVICIOSPOLI';
+const _PREF_ITEMSPOLI = 'ITEMSPOLI';
 const _PREF_PASS = 'PASS';
 
 const _PREF_APP_INICIAL =
@@ -72,81 +74,13 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
   Future<List<Modulo>> getListModulos() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _json = prefs.getString(_PREF_LIST_MODULOS) ?? '';
-    if(_json.length==0){
+    if (_json.length == 0) {
       return [];
     }
     log(_json);
 
     Map<String, dynamic> datos = json.decode(_json);
     return List<Modulo>.from(datos["datos"].map((x) => Modulo.fromJson(x)));
-  }
-
-  @override
-  Future<bool> setDatosListaModulos({required List<Modulo> listModulos}) async {
-    Map<String, dynamic> toJson() => {
-      "datos": List<dynamic>.from(listModulos.map((x) => x.toJson())),
-    };
-    String datos = json.encode(toJson());
-    log(datos);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_PREF_LIST_MODULOS, datos);
-    return true;
-  }
-
-  @override
-  Future<List<Servicio>> getListServicios() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _json = prefs.getString(_PREF_LIST_SERVICIOS) ?? '';
-
-    if(_json.length==0){
-      return [];
-    }
-    log(_json);
-
-    Map<String, dynamic> datos = json.decode(_json);
-    return List<Servicio>.from(datos["datos"].map((x) => Servicio.fromJson(x)));
-  }
-
-  @override
-  Future<bool> setDatosListaServicios({
-    required List<Servicio> listServicios,
-  }) async {
-    Map<String, dynamic> toJson() => {
-      "datos": List<dynamic>.from(listServicios.map((x) => x.toJson())),
-    };
-
-    String datos = json.encode(toJson());
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_PREF_LIST_SERVICIOS, datos);
-    return true;
-  }
-
-  @override
-  Future<List<ItemOffLine>> getListItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _json = prefs.getString(_PREF_ITEMS) ?? '';
-
-    if(_json.length==0){
-      return [];
-    }
-    log(_json);
-
-    Map<String, dynamic> datos = json.decode(_json);
-    return List<ItemOffLine>.from(datos["datos"].map((x) => ItemOffLine.fromJson(x)));
-  }
-
-
-  @override
-  Future<bool> setDatosListaItems({required List<ItemOffLine> listItems}) async {
-    Map<String, dynamic> toJson() => {
-      "datos": List<dynamic>.from(listItems.map((x) => x.toJson())),
-    };
-
-    String datos = json.encode(toJson());
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_PREF_ITEMS, datos);
-    return true;
   }
 
   @override
@@ -163,8 +97,141 @@ class LocalStoreProviderImpl extends LocalStorageRepository {
   @override
   Future<void> setFoto(Uint8List imageBytes) async {
     final prefs = await SharedPreferences.getInstance();
-    String base64String = base64Encode(imageBytes); // Convertir los bytes en base64
+    String base64String = base64Encode(
+        imageBytes); // Convertir los bytes en base64
     await prefs.setString(_PREF_FOTO, base64String); // Guardar como string
   }
 
+  @override
+  Future<bool> setDatosListaModulos({required List<Modulo> listModulos}) async {
+    Map<String, dynamic> toJson() =>
+        {
+          "datos": List<dynamic>.from(listModulos.map((x) => x.toJson())),
+        };
+    String datos = json.encode(toJson());
+    log(datos);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_LIST_MODULOS, datos);
+    return true;
+  }
+
+  @override
+  Future<List<Servicio>> getListServicios() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _json = prefs.getString(_PREF_LIST_SERVICIOS) ?? '';
+
+    if (_json.length == 0) {
+      return [];
+    }
+    log(_json);
+
+    Map<String, dynamic> datos = json.decode(_json);
+    return List<Servicio>.from(datos["datos"].map((x) => Servicio.fromJson(x)));
+  }
+
+  @override
+  Future<bool> setDatosListaServicios({
+    required List<Servicio> listServicios,
+  }) async {
+    Map<String, dynamic> toJson() =>
+        {
+          "datos": List<dynamic>.from(listServicios.map((x) => x.toJson())),
+        };
+
+    String datos = json.encode(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_LIST_SERVICIOS, datos);
+    return true;
+  }
+
+  @override
+  Future<List<ItemOffLine>> getListItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _json = prefs.getString(_PREF_ITEMS) ?? '';
+
+    if (_json.length == 0) {
+      return [];
+    }
+    log(_json);
+
+    Map<String, dynamic> datos = json.decode(_json);
+    return List<ItemOffLine>.from(
+        datos["datos"].map((x) => ItemOffLine.fromJson(x)));
+  }
+
+
+  @override
+  Future<bool> setDatosListaItems(
+      {required List<ItemOffLine> listItems}) async {
+    Map<String, dynamic> toJson() =>
+        {
+          "datos": List<dynamic>.from(listItems.map((x) => x.toJson())),
+        };
+
+    String datos = json.encode(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_ITEMS, datos);
+    return true;
+  }
+
+
+  @override
+  Future<List<ItemOffLine>> getListItemsPoli() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _json = prefs.getString(_PREF_ITEMSPOLI) ?? '';
+
+    if (_json.length == 0) {
+      return [];
+    }
+    log(_json);
+
+    Map<String, dynamic> datos = json.decode(_json);
+    return List<ItemOffLine>.from(
+        datos["datos"].map((x) => ItemOffLine.fromJson(x)));
+  }
+
+
+  @override
+  Future<bool> setDatosListaItemsPoli(
+      {required List<ItemOffLine> listItemsPoli}) async {
+    Map<String, dynamic> toJson() =>
+        {
+          "datos": List<dynamic>.from(listItemsPoli.map((x) => x.toJson())),
+        };
+    String datos = json.encode(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_ITEMSPOLI, datos);
+    return true;
+  }
+
+
+  @override
+  Future<bool> setDatosListaServiciosPoli(
+      {required List<Servicio> listServiciosPoli}) async {
+    Map<String, dynamic> toJson() =>
+        {
+          "datos": List<dynamic>.from(listServiciosPoli.map((x) => x.toJson())),
+        };
+
+    String datos = json.encode(toJson());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_PREF_LIST_SERVICIOSPOLI, datos);
+    return true;
+
+  }
+
+  @override
+  Future<List<Servicio>> getListServiciosPoli() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _json = prefs.getString(_PREF_LIST_SERVICIOSPOLI) ?? '';
+
+    if (_json.length == 0) {
+      return [];
+    }
+    log(_json);
+
+    Map<String, dynamic> datos = json.decode(_json);
+    return List<Servicio>.from(datos["datos"].map((x) => Servicio.fromJson(x)));
+  }
 }

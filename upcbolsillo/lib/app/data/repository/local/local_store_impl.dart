@@ -60,7 +60,7 @@ class LocalStoreImpl extends LocalStorageRepository {
   }
 
   @override
-  Future<List<ItemOffLine>> getListItems() {
+  Future<List<ItemOffLine>> getListItems() async{
     return _localStoreProviderImpl.getListItems();
   }
 
@@ -68,6 +68,30 @@ class LocalStoreImpl extends LocalStorageRepository {
   Future<bool> setDatosListaItems({required List<ItemOffLine> listItems}) async {
     return _localStoreProviderImpl.setDatosListaItems(
       listItems: listItems,
+    );
+  }
+
+  @override
+  Future<List<ItemOffLine>> getListItemsPoli() async{
+    return _localStoreProviderImpl.getListItemsPoli();
+  }
+
+  @override
+  Future<List<Servicio>> getListServiciosPoli() async{
+    return _localStoreProviderImpl.getListServiciosPoli();
+  }
+
+  @override
+  Future<bool> setDatosListaItemsPoli({required List<ItemOffLine> listItemsPoli}) async{
+    return _localStoreProviderImpl.setDatosListaItemsPoli(
+      listItemsPoli: listItemsPoli,
+    );
+  }
+
+  @override
+  Future<bool> setDatosListaServiciosPoli({required List<Servicio> listServiciosPoli}) async{
+    return _localStoreProviderImpl.setDatosListaServiciosPoli(
+      listServiciosPoli: listServiciosPoli,
     );
   }
 
