@@ -5,7 +5,8 @@ class MenuPrincipalController extends GetxController {
   late StreamSubscription connectionSubscription;
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
   final GpsController gpsController = Get.find<GpsController>();
-  final ModulosApiImpl _apiModulosRepository = Get.find<ModulosApiImpl>();
+  final ModulosRepository _apiModulosRepository = Get.find<ModulosRepository>();
+
   Rx<Uint8List?> fotoPerfilBytes = Rx<Uint8List?>(null);
   Rx<Modulo> datosModulos = Modulo(
           descripcionModulo: '',

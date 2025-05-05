@@ -1,5 +1,11 @@
 part of '../providers_impl.dart';
-class MapaUpcApiProviderImpl extends MapaUpcRepository {
+
+abstract class MapaUpcApiProvider {
+  Future<List<Upc>> buscaDatosUpc({required double la,required double lo}) ;
+
+}
+
+class MapaUpcApiProviderImpl extends MapaUpcApiProvider {
   @override
   Future<List<Upc>> buscaDatosUpc({required double la, required double lo}) async {
     try {

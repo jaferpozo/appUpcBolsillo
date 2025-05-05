@@ -1,5 +1,11 @@
 part of '../providers_impl.dart';
-class ModulosApiProviderImpl extends ModulosRepository {
+
+abstract class ModulosApiProvider {
+  Future<List<Modulo>> buscaListaModulos() ;
+
+}
+
+class ModulosApiProviderImpl extends ModulosApiProvider {
 
   @override
   Future<List<Modulo>> buscaListaModulos() async {

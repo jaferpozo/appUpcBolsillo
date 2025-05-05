@@ -1,8 +1,9 @@
 part of '../controllers.dart';
 
 class RegistroUsuarioController extends GetxController {
-  final RegistroUsuarioApiImpl _apiRegistroUsuarioRepository =
-      Get.find<RegistroUsuarioApiImpl>();
+  final RegistroUsuarioRepository _apiRegistroUsuarioRepository =
+      Get.find<RegistroUsuarioRepository>();
+
   final GpsController gpsController = Get.find<GpsController>();
   final LocalStoreImpl _LocalStoreImpl = Get.find<LocalStoreImpl>();
   Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);

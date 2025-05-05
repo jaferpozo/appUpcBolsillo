@@ -1,5 +1,14 @@
 part of '../providers_impl.dart';
-class ServiciosApiProviderImpl extends ServiciosRepository {
+abstract class ServiciosApiProvider {
+  Future<List<Servicio>> buscaListaServicios(int id) ;
+
+  Future<bool> registrarEvento({required String tipoEvento,
+    required String descripcion,
+    required String imagen}) ;
+
+}
+
+class ServiciosApiProviderImpl extends ServiciosApiProvider {
 
   @override
   Future<List<Servicio>> buscaListaServicios(int id) async {

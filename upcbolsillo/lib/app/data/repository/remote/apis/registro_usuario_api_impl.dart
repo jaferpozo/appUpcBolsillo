@@ -3,7 +3,7 @@ part of '../../data_repositories.dart';
 class RegistroUsuarioApiImpl extends RegistroUsuarioRepository {
 
 
-  final RegistroUsuarioApiProviderImpl   _registroUsuarioApiProviderImpl ;
+  final RegistroUsuarioApiProvider   _registroUsuarioApiProviderImpl ;
 
   RegistroUsuarioApiImpl(this._registroUsuarioApiProviderImpl);
 

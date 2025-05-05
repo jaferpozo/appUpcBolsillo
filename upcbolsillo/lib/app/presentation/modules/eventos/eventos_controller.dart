@@ -5,7 +5,8 @@ class EventosController extends GetxController {
   late StreamSubscription connectionSubscription;
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
 
-  final ServiciosApiImpl _apiServiciosRepository = Get.find<ServiciosApiImpl>();
+  final ServiciosRepository _apiServiciosRepository = Get.find();
+
   final SaveFileImgUseCase _saveFileImgUseCase = Get.find();
   final TextEditingController descripcionController = TextEditingController();
   Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);
@@ -19,7 +20,7 @@ class EventosController extends GetxController {
         urlImagen: '',
       ).obs;
   RxList<Servicio> listaEventos = <Servicio>[].obs;
-  final ItemsApiImpl _apiItemsRepository = Get.find<ItemsApiImpl>();
+
   Rx<Item> datosItemEventos = Item(descripcion: '', idUpcServitems: 0).obs;
   RxList<Item> listaItemsEventos = <Item>[].obs;
   String detalle = 'RECUERDE LO SIGUIENTE';

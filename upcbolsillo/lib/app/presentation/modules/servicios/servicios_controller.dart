@@ -8,7 +8,8 @@ class ServiciosController extends GetxController {
   late StreamSubscription connectionSubscription;
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
 
-  final ServiciosApiImpl _apiServiciosRepository = Get.find<ServiciosApiImpl>();
+  final ServiciosRepository _apiServiciosRepository = Get.find<ServiciosRepository>();
+
   Rx<Servicio> datosServicios =
       Servicio(
         descripcion: '',
@@ -20,7 +21,8 @@ class ServiciosController extends GetxController {
       ).obs;
 
   RxList<Servicio> listaServicios = <Servicio>[].obs;
-  final ItemsApiImpl _apiItemsRepository = Get.find<ItemsApiImpl>();
+  final ItemsRepository _apiItemsRepository = Get.find<ItemsRepository>();
+
   Rx<Item> datosItemServicios = Item(descripcion: '', idUpcServitems: 0).obs;
   RxList<Item> listaItemsServicios = <Item>[].obs;
   RxList<ItemOffLine> listaItemsServiciosTodos = <ItemOffLine>[].obs;

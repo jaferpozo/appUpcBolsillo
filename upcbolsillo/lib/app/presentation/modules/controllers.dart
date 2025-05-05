@@ -18,6 +18,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:upcbolsillo/app/domain/repositories/domain_repositories.dart';
 
 import '../../core/app_config.dart';
 import '../../core/change_notifier/connection_status_change_notifier.dart';

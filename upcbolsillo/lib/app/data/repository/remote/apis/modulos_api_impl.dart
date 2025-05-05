@@ -1,6 +1,6 @@
 part of '../../data_repositories.dart';
 class ModulosApiImpl extends ModulosRepository {
-  final ModulosApiProviderImpl   _modulosApiProviderImpl ;
+  final ModulosApiProvider   _modulosApiProviderImpl ;
   ModulosApiImpl(this._modulosApiProviderImpl);
 
   @override

@@ -4,7 +4,9 @@ class MapaUpcController extends GetxController {
   RxBool peticionServerState = false.obs;
   final internetChecker = CheckInternetConnection();
   final GpsController gpsController = Get.find<GpsController>();
-  final MapaUpcApiImpl _apiMapaUpcRepository = Get.find<MapaUpcApiImpl>();
+
+  final MapaUpcRepository _apiMapaUpcRepository = Get.find<MapaUpcRepository>();
+
   late PolylinePoints polylinePoints;
   RxList<LatLng> polylineCoords = <LatLng>[].obs;
   RxList<LatLng> polylineCoordsVacio = <LatLng>[LatLng(0, 0)].obs;

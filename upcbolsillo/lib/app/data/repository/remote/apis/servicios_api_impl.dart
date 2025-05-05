@@ -1,6 +1,6 @@
 part of '../../data_repositories.dart';
 class ServiciosApiImpl extends ServiciosRepository {
-  final ServiciosApiProviderImpl   _serviciosApiProviderImpl ;
+  final ServiciosApiProvider   _serviciosApiProviderImpl ;
   ServiciosApiImpl(this._serviciosApiProviderImpl);
 
   @override

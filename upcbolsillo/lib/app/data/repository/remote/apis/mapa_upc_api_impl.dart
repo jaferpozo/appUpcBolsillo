@@ -1,6 +1,6 @@
 part of '../../data_repositories.dart';
 class MapaUpcApiImpl extends MapaUpcRepository {
-  final MapaUpcApiProviderImpl   _mapaUpcApiProviderImpl ;
+  final MapaUpcApiProvider   _mapaUpcApiProviderImpl ;
   MapaUpcApiImpl(this._mapaUpcApiProviderImpl);
 
   @override

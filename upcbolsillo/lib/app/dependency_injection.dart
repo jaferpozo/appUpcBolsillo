@@ -9,14 +9,33 @@ import 'domain/repositories/domain_repositories.dart';
 
 class DependencyInjection extends Bindings{
   static ini(){
+
+    // Repository
+    Get.lazyPut<ItemsRepository>(()=>ItemsApiImpl(itemsApiProviderImpl: Get.find()),fenix: true);
+    Get.lazyPut<ModulosRepository> (() => ModulosApiImpl(Get.find()), fenix: true);
+    Get.lazyPut<ServiciosRepository> (() => ServiciosApiImpl(Get.find()), fenix: true);
+    Get.lazyPut<MapaUpcRepository> (() => MapaUpcApiImpl(Get.find()), fenix: true);
+    Get.lazyPut<RegistroUsuarioRepository> (() => RegistroUsuarioApiImpl(Get.find()), fenix: true);
+
+
+    // Data sources
+    Get.lazyPut<ItemsApiProvider>(()=>ItemsApiProviderImpl(), fenix: true);
+    Get.lazyPut<ModulosApiProvider>(()=>ModulosApiProviderImpl(), fenix: true);
+    Get.lazyPut<ServiciosApiProvider>(()=>ServiciosApiProviderImpl(), fenix: true);
+    Get.lazyPut<MapaUpcApiProvider>(()=>MapaUpcApiProviderImpl(), fenix: true);
+    Get.lazyPut<RegistroUsuarioApiProvider>(()=>RegistroUsuarioApiProviderImpl(), fenix: true);
+
+
+
     Get.lazyPut<LocalStorageRepository> (() => LocalStoreProviderImpl(), fenix: true);
     Get.lazyPut<LocalStoreProviderImpl> (() => LocalStoreProviderImpl(), fenix: true);
     Get.lazyPut<LocalStoreImpl> (() => LocalStoreImpl(), fenix: true);
-    Get.lazyPut<ModulosApiImpl> (() => ModulosApiImpl(ModulosApiProviderImpl()), fenix: true);
-    Get.lazyPut<ServiciosApiImpl> (() => ServiciosApiImpl(ServiciosApiProviderImpl()), fenix: true);
-    Get.lazyPut<ItemsApiImpl> (() => ItemsApiImpl(ItemsApiProviderImpl()), fenix: true);
-    Get.lazyPut<MapaUpcApiImpl> (() => MapaUpcApiImpl(MapaUpcApiProviderImpl()), fenix: true);
-    Get.lazyPut<RegistroUsuarioApiImpl> (() => RegistroUsuarioApiImpl(RegistroUsuarioApiProviderImpl()), fenix: true);
+
+
+
+    // Data sources
+
+
     Get.put(GpsController());
     DependencyInjectionFeactures.init();
   }

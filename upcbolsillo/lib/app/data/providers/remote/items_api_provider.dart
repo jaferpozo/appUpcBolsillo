@@ -1,5 +1,12 @@
 part of '../providers_impl.dart';
-class ItemsApiProviderImpl extends ItemsRepository {
+
+abstract class ItemsApiProvider {
+  Future<List<Item>> buscaDatosItem(int id) ;
+  Future<List<ItemOffLine>> buscaDatosItemsOffline() ;
+
+}
+
+class ItemsApiProviderImpl extends ItemsApiProvider {
 
   @override
   Future<List<Item>> buscaDatosItem(int id) async {
