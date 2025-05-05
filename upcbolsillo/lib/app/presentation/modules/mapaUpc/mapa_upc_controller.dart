@@ -35,8 +35,6 @@ class MapaUpcController extends GetxController {
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
   Rx<LatLng> cen = LatLng(0.0, 0.0).obs;
 
-  //RxList<Subcir> datosSubcir = <Subcir>[].obs;
-  //configuraciones del mapa
   double latitudMiUbicacion = 0.0, longitudMiUbicacion = 0.0;
   double zoomMap = 15;
   int totalAvazar = 0;
@@ -57,30 +55,19 @@ class MapaUpcController extends GetxController {
   @override
   void onInit() {
    _init();
-
-    // TODO: el contolloler se ha creado pero la vista no se ha renderizado
     super.onInit();
   }
 
   @override
   void onReady() {
-    // TODO: Donde la vista ya se presento
-   // getLocationNueva();
   }
 
   _init() async {
-    print(Get.deviceLocale.toString());
-   // getLocation();
-   // iniciarSeguimiento1();
-   // getLocationNueva();
     consultarUpc();
 
   }
 consultarUpc()async{
 
-    print('auxilioooo'+AppConfig.ubicacionLista.toString());
-
-    print('auxiliooooeeeeeeeee'+AppConfig.ubicacion.value.latitude.toString());
     if (AppConfig.ubicacionLista.isTrue){
       getDatosUpc(la:AppConfig.ubicacion.value.latitude, lo:AppConfig.ubicacion.value.longitude );
       zoomMap = 15;
@@ -97,7 +84,6 @@ consultarUpc()async{
       peticionServerState(true);
       datosUpc.value =
           await _apiMapaUpcRepository.buscaDatosUpc(la: la, lo: lo);
-      print('----------------------*datosUpc' + datosUpc.toString());
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
@@ -132,33 +118,24 @@ consultarUpc()async{
     peticionServerState(true);
     final String osrmUrl =
         "https://routing.openstreetmap.de/routed-car/route/v1/driving/$inicioLong,$inicioLat;$finLong,$finLat?overview=full&steps=true&geometries=geojson";
-    print('solicitud url '+osrmUrl);
     try {
       final response = await http.get(Uri.parse(osrmUrl));
-
       if (response.statusCode == 200) {
         final decodedData = jsonDecode(response.body);
         final List coordinates = decodedData['routes'][0]['geometry']['coordinates'];
         polylineCoords.assignAll(
           coordinates.map((point) => LatLng(point[1], point[0])).toList(),);
-        print("Puntos de la polilínea: ${polylineCoords.length}");
-        // Instrucciones paso a paso
         final List steps = decodedData['routes'][0]['legs'][0]['steps'];
         pasosRuta.value = steps.map((step) => InstructionStep.fromJson(step)).toList();
         instruccionesRuta.value = pasosRuta.map((p) => p.instruction).toList();
-        print("Instrucciones:");
-
         instruccionesRuta.forEach(print);
         peticionServerState(false);
       } else {
-        print("Error al obtener la ruta: ${response.statusCode}");
         peticionServerState(false);
       }
     } catch (e) {
-      print("Excepción en la solicitud OSR: $e");
       peticionServerState(false);
     }
-
     return polylineCoords;
   }
 }

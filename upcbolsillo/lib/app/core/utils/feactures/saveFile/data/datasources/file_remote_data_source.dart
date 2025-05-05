@@ -1,7 +1,6 @@
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../../../app/core/exceptions/exception_helper.dart';
-import '../../../../app/data/providers/providers_impl.dart';
+import '../../../../../../data/providers/providers_impl.dart';
 import '../../domain/request/file_request.dart';
 import '../models/file_model.dart';
 

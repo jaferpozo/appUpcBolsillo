@@ -5,6 +5,6 @@ abstract class ServiciosRepository {
 
   Future<bool> registrarEvento({required String tipoEvento,
     required String descripcion,
-    required String imagen});
+    required String imagen}) ;
 
 }

@@ -9,7 +9,7 @@ class BotonSeleccionarFoto extends StatelessWidget {
   const BotonSeleccionarFoto({
     Key? key,
     required this.onPressed,
-    this.texto = 'Seleccionar Foto',
+    this.texto = 'Seleccione una Foto',
     this.icono = Icons.camera_alt,
     this.colorFondo = Colors.blue,
     this.colorTexto = Colors.white,

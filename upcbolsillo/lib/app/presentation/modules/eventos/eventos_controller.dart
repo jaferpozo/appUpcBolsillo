@@ -2,9 +2,6 @@ part of '../controllers.dart';
 
 class EventosController extends GetxController {
   RxBool peticionServerState = false.obs;
-
-  final LocalStoreImpl _localStoreImpl = Get.find<LocalStoreImpl>();
-
   late StreamSubscription connectionSubscription;
   final status = Rx<ConnectionStatus>(ConnectionStatus.online);
 
@@ -55,7 +52,6 @@ class EventosController extends GetxController {
 
   @override
   void onReady() {
-    // TODO: Donde la vista ya se presento
     _init();
     if (!_notificacionesIniciadas) {
       _initNotificaciones();
@@ -64,7 +60,6 @@ class EventosController extends GetxController {
   }
 
   _init() async {
-    print(Get.deviceLocale.toString());
   }
 
   connectionStatusController() {
@@ -78,9 +73,7 @@ class EventosController extends GetxController {
 
     try {
       String path = dotenv.env['PATH_IMG_ELECCIONES'] ?? '';
-
       String nameFile = "eventos";
-
       FileRequest request = FileRequest(
         file: mGaleryCameraModel.value!.imageFile,
         path: path,
@@ -140,11 +133,11 @@ class EventosController extends GetxController {
     final messaging = FirebaseMessaging.instance;
     await messaging.requestPermission();
     await messaging.subscribeToTopic('upceventos1');
-    debugPrint("✅ Suscrito al topic 'upceventos1'");
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final titulo = message.notification?.title ?? "Sin título";
       final cuerpo = message.notification?.body ?? "Sin cuerpo";
-      debugPrint("Notificación recibida: $titulo - $cuerpo");
+
       if (titulo.toString()=="WEB"){
         mostrarSnackbarConEstilo(
           titulo: titulo,

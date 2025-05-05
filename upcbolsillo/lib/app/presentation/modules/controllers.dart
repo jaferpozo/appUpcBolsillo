@@ -19,16 +19,13 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-
-
-
-import '../../../feactures/saveFile/domain/request/file_request.dart';
-import '../../../feactures/saveFile/domain/use_cases/save_file_img_use_case.dart';
 import '../../core/app_config.dart';
 import '../../core/change_notifier/connection_status_change_notifier.dart';
 import '../../core/exceptions/exceptions.dart';
 import '../../core/utils/check_internet_conexion.dart';
 import '../../core/utils/device_info.dart';
+import '../../core/utils/feactures/saveFile/domain/request/file_request.dart';
+import '../../core/utils/feactures/saveFile/domain/use_cases/save_file_img_use_case.dart';
 import '../../core/utils/my_date.dart';
 import '../../core/utils/my_gps.dart';
 import '../../core/utils/photo_helper.dart';

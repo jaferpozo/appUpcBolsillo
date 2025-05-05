@@ -1,9 +1,7 @@
 
 import 'dart:convert';
 
-import '../../../../app/data/models/models.dart';
-
-
+import '../../../../../../data/models/models.dart';
 
 FileModel fileModelFromJson(String str) => FileModel.fromJson(json.decode(str));
 

@@ -17,8 +17,6 @@ class MenuPrincipalController extends GetxController {
           tituloModulo: '')
       .obs;
   RxList<Modulo> listaModulo = <Modulo>[].obs;
-
-  //variable para que solo carge una vez los datos
   String nombre = '';
   String cedula = '';
   String direc = "";
@@ -33,13 +31,11 @@ class MenuPrincipalController extends GetxController {
    verificaTConexion();
     _verificaDatos();
    _cargarFotoPerfil();
-    // TODO: el contolloler se ha creado pero la vista no se ha renderizado
     super.onInit();
   }
 
   @override
   void onReady() {
-    // TODO: Donde la vista ya se presento
     _init();
   }
 
@@ -52,13 +48,11 @@ class MenuPrincipalController extends GetxController {
   Rx<GaleryCameraModel?> mGaleryCameraModel = Rx<GaleryCameraModel?>(null);
 
   _verificaDatos() async {
-    print("SPLASH: verificando datos");
     userPref.value = await _localStoreImpl.getDatosUsuario();
     acuerdo = await _localStoreImpl.getDatosAcuerdo();
   }
 
   verificarGps() async {
-    //se verifica si el GPS del dispositivo seta activo y tiene permisos
     bool verificarGps = await gpsController.verificarGPS();
     if (verificarGps) {
       gpsController.iniciarSeguimiento();
@@ -90,10 +84,8 @@ class MenuPrincipalController extends GetxController {
       verificaTConexion();
     }
     else{
-      //cambiar
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
-      print("tengo estos modulos ${list.length}");
     }
 
   }
@@ -101,7 +93,6 @@ class MenuPrincipalController extends GetxController {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('connected');
         cargarDatosLista();
       }
       else{
@@ -111,18 +102,14 @@ class MenuPrincipalController extends GetxController {
 
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
-      print("tengo estos modulos ${list.length}");
     }
   }
 
   cargarDatosLista() async {
     try {
-      print("cargarDatosLista");
-
       listaModulo.clear();
       peticionServerState(true);
       listaModulo.value = await _apiModulosRepository.buscaListaModulos();
-      print('----------------------*$listaModulo');
 
       if(listaModulo.length==0){
         var list =await _localStoreImpl.getListModulos();
@@ -135,7 +122,6 @@ class MenuPrincipalController extends GetxController {
       peticionServerState(false);
       var list =await _localStoreImpl.getListModulos();
       listaModulo.value=list;
-      print("tengo estos modulos ${list.length}");
     }
   }
 

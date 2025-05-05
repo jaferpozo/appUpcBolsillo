@@ -59,7 +59,6 @@ class RegistroUsuarioController extends GetxController {
 
   @override
   void onInit() {
-    // getLocation();
     getTelephonyInfo();
     getImei();
     initPlatformDevice();
@@ -126,18 +125,14 @@ class RegistroUsuarioController extends GetxController {
     SSID = (await NetworkInfo().getWifiName())!;
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformDevice() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     try {
       if (Platform.isAndroid) {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        print('Running on ${androidInfo.model}');
-        print('Running on ${androidInfo.manufacturer}');
         modeloCelular = '${androidInfo.manufacturer}-${androidInfo.model}';
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        print('Running on ${iosInfo.utsname.machine}');
         modeloCelular =
             '${iosInfo.utsname.machine}-${iosInfo.utsname.version}}';
       }
@@ -222,7 +217,6 @@ class RegistroUsuarioController extends GetxController {
             descripcion: mensaje,
             title: 'Mi Upc',
             btnOkOnPress: () {
-              // Get.back();
             },
           );
           peticionServerState(false);

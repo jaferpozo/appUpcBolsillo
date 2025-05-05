@@ -61,7 +61,6 @@ class ServiciosController extends GetxController {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         estadoConex = 'S';
-        print('connected');
       } else {
         if (id==1){ listaServicios.value = await _localStoreImpl.getListServiciosPoli();}
         if (id==2){listaServicios.value = await _localStoreImpl.getListServicios();}
@@ -121,8 +120,6 @@ class ServiciosController extends GetxController {
       listaItemsServicios.clear();
       peticionServerState(true);
       listaItemsServicios.value = await _apiItemsRepository.buscaDatosItem(id);
-      print('----------------------*' + listaItemsServicios.length.toString());
-
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);
@@ -137,8 +134,6 @@ class ServiciosController extends GetxController {
 
       listaItemsServiciosTodos.value =
           await _apiItemsRepository.buscaDatosItemsOffline();
-      print('TODOS----> ' + listaItemsServiciosTodos.length.toString());
-
       if (listaItemsServiciosTodos.isEmpty) {
         listaItemsServiciosTodos.value = await _localStoreImpl.getListItems();
         return;
@@ -146,7 +141,6 @@ class ServiciosController extends GetxController {
       await _localStoreImpl.setDatosListaItems(
         listItems: listaItemsServiciosTodos.value,
       );
-      print("ERROR---->4--" + listaItemsServiciosTodos.length.toString());
       peticionServerState(false);
     } on ServerException catch (e) {
       peticionServerState(false);

@@ -49,7 +49,6 @@ part 'contenedor_desing_widget.dart';
 part 'btnIconWidgetApp.dart';
 part 'opcionesUpcWidget.dart';
 part 'tituloTextWidget.dart';
-part 'botones2Widget.dart';
 part 'customMap.dart';
 part 'markerWidget.dart';
 part 'imagenBase64Widget.dart';
